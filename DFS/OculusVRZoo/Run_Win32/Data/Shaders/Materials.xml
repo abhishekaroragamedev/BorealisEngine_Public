@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Materials>
+<!-- Engine Materials -->
+	<Material name="UI" shader="DefaultUI" />
+	<Material name="Fullscreen" shader="Fullscreen">
+		<Texture fileName="Data/Images/Texture_Default.png" mip="8" />
+	</Material>
+	<Material name="Bloom" shader="Bloom">
+		<Texture fileName="Data/Images/Texture_Default.png" mip="8" />
+		<Texture fileName="Data/Images/Texture_Default_Normal.png" mip="8" />
+	</Material>
+	<Material name="OculusVRMirrorToScreen" shader="OculusVRMirrorToScreen">
+		<Texture fileName="Data/Images/Texture_Default.png" mip="8" />
+	</Material>
+	<Material name="ShadowMap" shader="ShadowMap" />
+<!-- Game-specific Materials -->
+	<Material name="Sphere" shader="DefaultLit">
+		<Texture fileName="Data/Images/Texture_Default.png" mip="8" />
+		<Texture fileName="Data/Images/Texture_Default_Normal.png" mip="8" />
+		<Texture fileName="Data/Images/Texture_Default_Black.png" mip="8" />
+		<Texture fileName="Data/Images/Texture_Default_Black.png" mip="8" />
+		<Texture fileName="Data/Images/Texture_Default_Normal.png" mip="8" />
+		<Specular amount="0.5" power="6.0" />
+	</Material>
+	<Material name="Box" shader="DefaultLit">
+		<Texture fileName="Data/Images/Couch/couch_diffuse.png" mip="8" />
+		<Texture fileName="Data/Images/Couch/couch_normal.png" mip="8" />
+		<Texture fileName="Data/Images/Texture_Default.png" mip="8" />
+		<Texture fileName="Data/Images/Texture_Default_Black.png" mip="8" />
+		<Texture fileName="Data/Images/Couch/couch_normal.png" mip="8" />
+		<Specular amount="0.5" power="6.0" />
+	</Material>
+	<Material name="Ship" shader="DefaultLitDetail">
+		<Texture fileName="Data/Models/scifi_fighter_mk6/SciFi_Fighter-MK6-diffuse.jpg" mip="8" />
+		<Texture fileName="Data/Models/scifi_fighter_mk6/SciFi_Fighter-MK6-normal.png" mip="8" />
+		<Texture fileName="Data/Models/scifi_fighter_mk6/SciFi_Fighter-MK6-spec.jpg" mip="8" />
+		<Texture fileName="Data/Models/scifi_fighter_mk6/SciFi_Fighter-MK6-lights.jpg" mip="8" />
+		<Texture fileName="Data/Models/scifi_fighter_mk6/Metal_Detail.jpg" mip="8" />
+		<Specular amount="1.0" power="12.0" />
+	</Material>
+	<Material name="SnowMiku0" shader="DefaultLitAlpha">
+		<Texture fileName="Data/Models/SnowMiku/roomitem_s_kage.png" mip="8" />
+		<Texture fileName="Data/Images/Texture_Default_Normal.png" mip="8" />
+		<Texture fileName="Data/Images/Texture_Default.png" mip="8" />
+		<Texture fileName="Data/Images/Texture_Default_Black.png" mip="8" />
+		<Texture fileName="Data/Images/Texture_Default_Normal.png" mip="8" />
+		<Specular amount="0.5" power="6.0" />
+	</Material>
+	<Material name="SnowMiku1" shader="DefaultLit">
+		<Texture fileName="Data/Models/SnowMiku/roomitems_s011.png" mip="8" />
+		<Texture fileName="Data/Images/Texture_Default_Normal.png" mip="8" />
+		<Texture fileName="Data/Images/Texture_Default.png" mip="8" />
+		<Texture fileName="Data/Images/Texture_Default_Black.png" mip="8" />
+		<Texture fileName="Data/Images/Texture_Default_Normal.png" mip="8" />
+		<Specular amount="0.5" power="6.0" />
+	</Material>
+	<Material name="SnowMiku2" shader="DefaultLit">
+		<Texture fileName="Data/Models/SnowMiku/roomitems_s011a.png" mip="8" />
+		<Texture fileName="Data/Images/Texture_Default_Normal.png" mip="8" />
+		<Texture fileName="Data/Images/Texture_Default.png" mip="8" />
+		<Texture fileName="Data/Images/Texture_Default_Black.png" mip="8" />
+		<Texture fileName="Data/Images/Texture_Default_Normal.png" mip="8" />
+		<Specular amount="0.5" power="6.0" />
+	</Material>
+	<Material name="Grid" shader="Default">
+		<Texture fileName="Data/Images/Texture_Default.png" mip="8" />
+	</Material>
+	<Material name="LeftHand" shader="DefaultLit">
+		<Texture fileName="Data/Images/Couch/couch_diffuse.png" mip="8" />
+		<Texture fileName="Data/Images/Couch/couch_normal.png" mip="8" />
+		<Texture fileName="Data/Images/Texture_Default.png" mip="8" />
+		<Texture fileName="Data/Images/Texture_Default_Black.png" mip="8" />
+		<Texture fileName="Data/Images/Couch/couch_normal.png" mip="8" />
+		<Specular amount="0.5" power="6.0" />
+	</Material>
+	<Material name="RightHand" shader="DefaultLitCW">
+		<Texture fileName="Data/Images/Couch/couch_diffuse.png" mip="8" />
+		<Texture fileName="Data/Images/Couch/couch_normal.png" mip="8" />
+		<Texture fileName="Data/Images/Texture_Default.png" mip="8" />
+		<Texture fileName="Data/Images/Texture_Default_Black.png" mip="8" />
+		<Texture fileName="Data/Images/Couch/couch_normal.png" mip="8" />
+		<Specular amount="0.5" power="6.0" />
+	</Material>
+	<Material name="Mutable" shader="DefaultLit">
+		<Texture fileName="Data/Images/Grass/Grass_Diffuse.jpg" mip="8" />
+		<Texture fileName="Data/Images/Grass/Grass_Normal.jpg" mip="8" />
+		<Texture fileName="Data/Images/Texture_Default.png" mip="8" />
+		<Texture fileName="Data/Images/Texture_Default_Black.png" mip="8" />
+		<Texture fileName="Data/Images/Grass/Grass_Normal.jpg" mip="8" />
+		<Specular amount="0.1" power="6.0" />
+	</Material>
+	<Material name="MutableStone" shader="DefaultLit">
+		<Texture fileName="Data/Images/Cobblestone/stone_diffuse.png" mip="8" />
+		<Texture fileName="Data/Images/Cobblestone/stone_normal.png" mip="8" />
+		<Texture fileName="Data/Images/Texture_Default.png" mip="8" />
+		<Texture fileName="Data/Images/Texture_Default_Black.png" mip="8" />
+		<Texture fileName="Data/Images/Couch/couch_normal.png" mip="8" />
+		<Specular amount="0.5" power="6.0" />
+	</Material>
+	<Material name="MutableWireframe" shader="DefaultWireframe">
+		<Texture fileName="Data/Images/Texture_Default.png" mip="8" />
+	</Material>
+</Materials>

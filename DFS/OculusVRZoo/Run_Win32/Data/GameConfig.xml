@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GameConfig
+	
+	screenHeight="1000"
+	screenAspect="1.778"
+	appName="Oculus VR Zoo - Abhishek Arora"
+	
+	msaaEnabled="true"
+	msaaSamples="4"
+	bloomEnabled="true"
+	
+	shipAudioAttenuation="0.0,0.0,2.0"
+	
+	directionalLightColor="1.0,1.0,1.0,0.3"
+	directionalLightDirection="1.0,1.0,1.0"
+	spotLightRotationRadius="0.5"
+	spotLightRotationDegreesPerSecond="30.0"
+	flashlightColor="1.0,1.0,1.0,10.0"
+	flashlightMaxIntensity ="50.0"
+	flashlightIntensityDeltaPerSecond="12.5"
+	
+	galleryItemMaxRotationDegreesPerSecond="45.0"
+	gallerySlotChangeDotProductThreshold="0.5"
+	gallerySlotChangeHandSpeedThreshold="0.25"
+	galleryItemMaxTurnDegreesPerSecond="60.0"
+	volumeAdjustmentMaxPerSecond="0.25"
+	
+	vertexMoveTriggerThreshold="0.5"
+	modelMaxTranslationPerSecond="1.0"
+	
+	vrEnabled="true"
+	vrHUDEnabled="true"
+	vrEyeSpacingmm="60.0"
+	vrCameraFOVDegrees="60.0"
+	vrCameraFarZ="1000.0"
+	vrCameraHeightm="1.8288"
+	vrLeftHUDPosition="0.06,0.0,0.1"
+	vrLeftHUDOrientationEuler="0.0,90.0,0.0"
+	vrLeftHUDDimensions="0.5,0.3"
+	vrRightHUDPosition="0.15,0.0,0.1"
+	vrRightHUDOrientationEuler="0.0,90.0,0.0"
+	vrRightHUDDimensions="0.5,0.3"
+/>
