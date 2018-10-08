@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Materials>
+<!-- Engine Materials -->
+  <Material name="UI" shader="DefaultUI" />
+	<Material name="Bloom" shader="Bloom">
+		<Texture fileName="Data/Images/Texture_Default.png" />
+		<Texture fileName="Data/Images/Texture_Default_Normal.png" />
+	</Material>
+	<Material name="MotionBlur" shader="MotionBlur">
+		<Texture fileName="Data/Images/Texture_Default.png" />
+		
+		<Float name="BLUR_FACTOR" defaultValue="0.0" />
+	</Material>
+	<Material name="MotionBlur" shader="MotionBlur">
+		<Texture fileName="Data/Images/Texture_Default.png" />
+		
+		<Float name="BLUR_FACTOR" defaultValue="0.0" />
+	</Material>
+	<Material name="ShadowMap" shader="ShadowMap" />
+<!-- Game-specific Materials -->
+	<Material name="Plane" shader="DefaultLit" >
+		<Texture fileName="Data/Images/Couch/couch_diffuse.png" />
+		<Texture fileName="Data/Images/Couch/couch_normal.png" />
+		<Texture fileName="Data/Images/Texture_Default.png" />
+		<Texture fileName="Data/Images/Texture_Default_Black.png" />
+		<Texture fileName="Data/Images/Couch/couch_normal.png" />
+		<Specular amount="0.4" power="5.0" />
+	</Material>
+	<Material name="Cube" shader="DefaultLitAlpha" >
+		<Texture fileName="Data/Images/Couch/couch_diffuse.png" />
+		<Texture fileName="Data/Images/Couch/couch_normal.png" />
+		<Texture fileName="Data/Images/Texture_Default.png" />
+		<Texture fileName="Data/Images/Texture_Default_Black.png" />
+		<Texture fileName="Data/Images/Couch/couch_normal.png" />
+		<Specular amount="0.4" power="5.0" />
+	</Material>
+	<Material name="Sphere" shader="DefaultLit" >
+		<Texture fileName="Data/Images/Cobblestone/stone_diffuse.png" mip="4" />
+		<Texture fileName="Data/Images/Cobblestone/stone_normal.png" mip="4" />
+		<Texture fileName="Data/Images/Texture_Default.png" mip="4" />
+		<Texture fileName="Data/Images/Texture_Default_Black.png" mip="4" />
+		<Texture fileName="Data/Images/Cobblestone/stone_normal.png" mip="4" />
+		<Specular amount="0.4" power="5.0" />
+	</Material>
+	<Material name="Ship" shader="DefaultLitDetail" >
+		<Texture fileName="Data/Models/scifi_fighter_mk6/SciFi_Fighter-MK6-diffuse.jpg" />
+		<Texture fileName="Data/Models/scifi_fighter_mk6/SciFi_Fighter-MK6-normal.png" />
+		<Texture fileName="Data/Models/scifi_fighter_mk6/SciFi_Fighter-MK6-spec.jpg" />
+		<Texture fileName="Data/Models/scifi_fighter_mk6/SciFi_Fighter-MK6-lights.jpg" />
+		<Texture fileName="Data/Models/scifi_fighter_mk6/Metal_Detail.jpg" />
+		<Specular amount="0.75" power="12.0" />
+	</Material>
+	<Material name="SurfacePatchDemo" shader="DefaultLit" >
+		<Texture fileName="Data/Images/Cobblestone/stone_diffuse.png" mip="4" />
+		<Texture fileName="Data/Images/Cobblestone/stone_normal.png" mip="4" />
+		<Texture fileName="Data/Images/Texture_Default.png" mip="4" />
+		<Texture fileName="Data/Images/Texture_Default_Black.png" mip="4" />
+		<Texture fileName="Data/Images/Cobblestone/stone_normal.png" mip="4" />
+		<Specular amount="0.1" power="5.0" />
+	</Material>
+	<Material name="SnowMiku0" shader="DefaultLitAlpha" >
+		<Texture fileName="Data/Models/SnowMiku/roomitem_s_kage.png" />
+		<Texture fileName="Data/Images/Texture_Default_Normal.png" />
+		<Texture fileName="Data/Images/Texture_Default.png" />
+		<Texture fileName="Data/Images/Texture_Default_Black.png" />
+		<Texture fileName="Data/Images/Texture_Default_Normal.png" />
+		<Specular amount="0.4" power="5.0" />
+	</Material>
+	<Material name="SnowMiku1" shader="DefaultLit" >
+		<Texture fileName="Data/Models/SnowMiku/roomitems_s011.png" />
+		<Texture fileName="Data/Images/Texture_Default_Normal.png" />
+		<Texture fileName="Data/Images/Texture_Default.png" />
+		<Texture fileName="Data/Images/Texture_Default_Black.png" />
+		<Texture fileName="Data/Images/Texture_Default_Normal.png" />
+		<Specular amount="0.4" power="5.0" />
+	</Material>
+	<Material name="SnowMiku2" shader="DefaultLit" >
+		<Texture fileName="Data/Models/SnowMiku/roomitems_s011a.png" />
+		<Texture fileName="Data/Images/Texture_Default_Normal.png" />
+		<Texture fileName="Data/Images/Texture_Default.png" />
+		<Texture fileName="Data/Images/Texture_Default_Black.png" />
+		<Texture fileName="Data/Images/Texture_Default_Normal.png" />
+		<Specular amount="0.4" power="5.0" />
+	</Material>
+	<Material name="HalloweenMiku0" shader="DefaultLitAlpha" >
+		<Texture fileName="Data/Models/HalloweenMiku/roomitem_s_kage.png" />
+		<Texture fileName="Data/Images/Texture_Default_Normal.png" />
+		<Texture fileName="Data/Images/Texture_Default.png" />
+		<Texture fileName="Data/Images/Texture_Default_Black.png" />
+		<Texture fileName="Data/Images/Texture_Default_Normal.png" />
+		<Specular amount="0.4" power="5.0" />
+	</Material>
+	<Material name="HalloweenMiku1" shader="DefaultLit" >
+		<Texture fileName="Data/Models/HalloweenMiku/roomitems_042_a.png" />
+		<Texture fileName="Data/Images/Texture_Default_Normal.png" />
+		<Texture fileName="Data/Images/Texture_Default.png" />
+		<Texture fileName="Data/Images/Texture_Default_Black.png" />
+		<Texture fileName="Data/Images/Texture_Default_Normal.png" />
+		<Specular amount="0.4" power="5.0" />
+	</Material>
+	<Material name="HalloweenMiku2" shader="DefaultLit" >
+		<Texture fileName="Data/Models/HalloweenMiku/roomitems_042.png" />
+		<Texture fileName="Data/Images/Texture_Default_Normal.png" />
+		<Texture fileName="Data/Images/Texture_Default.png" />
+		<Texture fileName="Data/Images/Texture_Default_Black.png" />
+		<Texture fileName="Data/Images/Texture_Default_Normal.png" />
+		<Specular amount="0.4" power="5.0" />
+	</Material>
+	<Material name="Luka0" shader="DefaultLitAlpha" >
+		<Texture fileName="Data/Models/Luka/roomitem_s_kage.png" />
+		<Texture fileName="Data/Images/Texture_Default_Normal.png" />
+		<Texture fileName="Data/Images/Texture_Default.png" />
+		<Texture fileName="Data/Images/Texture_Default_Black.png" />
+		<Texture fileName="Data/Images/Texture_Default_Normal.png" />
+		<Specular amount="0.4" power="5.0" />
+	</Material>
+	<Material name="Luka1" shader="DefaultLit" >
+		<Texture fileName="Data/Models/Luka/roomitems_005_color.png" />
+		<Texture fileName="Data/Images/Texture_Default_Normal.png" />
+		<Texture fileName="Data/Images/Texture_Default.png" />
+		<Texture fileName="Data/Images/Texture_Default_Black.png" />
+		<Texture fileName="Data/Images/Texture_Default_Normal.png" />
+		<Specular amount="0.4" power="5.0" />
+	</Material>
+	<Material name="Luka2" shader="DefaultLitAlpha" >
+		<Texture fileName="Data/Models/Luka/roomitems_005_alpha.png" />
+		<Texture fileName="Data/Images/Texture_Default_Normal.png" />
+		<Texture fileName="Data/Images/Texture_Default.png" />
+		<Texture fileName="Data/Images/Texture_Default_Black.png" />
+		<Texture fileName="Data/Images/Texture_Default_Normal.png" />
+		<Specular amount="0.4" power="5.0" />
+	</Material>
+	<Material name="Projectile" shader="Additive" >
+		<Texture fileName="Data/Images/Texture_Default.png" />
+	</Material>
+</Materials>

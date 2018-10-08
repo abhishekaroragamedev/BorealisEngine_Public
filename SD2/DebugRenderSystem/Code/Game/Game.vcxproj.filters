@@ -1,0 +1,158 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="General">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="DataFiles">
+      <UniqueIdentifier>{e5ac01e5-ffb8-4231-9105-79b2fd8d4d35}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{8c13f935-3f52-497a-bb68-58b4333e6ffa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\MathUtils">
+      <UniqueIdentifier>{a845ddac-1848-49aa-aee5-888b96a646a5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Main_Win32.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="TheApp.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="TheGame.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="GameCommon.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="Ship.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="Projectile.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="TheApp.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="TheGame.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCommon.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineBuildPreferences.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="Ship.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="Projectile.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="..\..\Run_Win32\Data\GameConfig.xml">
+      <Filter>DataFiles</Filter>
+    </Xml>
+    <Xml Include="..\..\Run_Win32\Data\Shaders\Materials.xml">
+      <Filter>Shaders</Filter>
+    </Xml>
+    <Xml Include="..\..\Run_Win32\Data\Shaders\Shaders.xml">
+      <Filter>Shaders</Filter>
+    </Xml>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Run_Win32\Data\Shaders\AdditiveFlat.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\AdditiveFlat.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\BloomBlur.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\BloomBlur.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\DebugRender.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\DebugRender.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\Default.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\Default.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\DefaultLit.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\DefaultLit.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\DefaultUI.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\DefaultUI.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\FullscreenPassThrough.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\FullscreenPassThrough.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\Invalid.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\Invalid.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\LitNormalDebug.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\LitNormalDebug.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\MotionBlur.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\MotionBlur.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\OculusVRFlipY.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\OculusVRFlipY.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\ShadowMap.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\ShadowMap.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\Skybox.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\Skybox.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\UV.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\UV.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\MathUtils\RangeMap.glsl">
+      <Filter>Shaders\MathUtils</Filter>
+    </None>
+  </ItemGroup>
+</Project>
