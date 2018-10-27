@@ -74,6 +74,30 @@ int Min( const int a, const int b )
 	}
 }
 
+size_t Max( const size_t a, const size_t b )
+{
+	if ( a >= b )
+	{
+		return a;
+	}
+	else
+	{
+		return b;
+	}
+}
+
+size_t Min( const size_t a, const size_t b )
+{
+	if ( a <= b )
+	{
+		return a;
+	}
+	else
+	{
+		return b;
+	}
+}
+
 float Max( const float a, const float b )
 {
 	if ( b > a )

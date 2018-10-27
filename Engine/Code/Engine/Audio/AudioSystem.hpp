@@ -39,7 +39,9 @@ public:
 	virtual void				SetSoundPlaybackBalance( SoundPlaybackID soundPlaybackID, float balance );	// balance is in [-1,1], where 0 is L/R centered
 	virtual void				SetSoundPlaybackSpeed( SoundPlaybackID soundPlaybackID, float speed );		// speed is frequency multiplier (1.0 == normal)
 	virtual void				SetSoundPlayback3DAttributes( SoundPlaybackID soundPlaybackID, const Vector3& position, const Vector3& velocity );
-	virtual void				SetListener3DAttributes( const Vector3& position, const Vector3& velocity, const Vector3& up, const Vector3& forward );
+	virtual void				SetListener3DAttributes( const Vector3& position, const Vector3& velocity, const Vector3& up, const Vector3& forward, int listenerID = 0 );
+	virtual int					GetNumListeners3D() const;
+	virtual void				SetNumListeners3D( int numListeners );
 
 	virtual SoundPlaybackID		PlayOneOffSoundFromGroup( const std::string& groupName, bool isLooped=false, float volume=1.f, float balance=0.0f, float speed=1.0f, bool isPaused=false );
 	virtual bool				RegisterSoundWithGroup( SoundID soundID, const std::string& groupName, bool spatial = false );

@@ -20,6 +20,8 @@ public:
 	std::vector< const ShaderProgram* > GetPrograms() const;
 	std::string GetName() const;
 
+	void LoadFromXML( const tinyxml2::XMLElement& shaderElement );
+
 public:
 	static Shader* AcquireResource( const std::string& shaderPassFilePath );
 

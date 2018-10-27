@@ -29,8 +29,7 @@ GalleryScene::GalleryScene()
 
 GalleryScene::~GalleryScene()
 {
-	OVRContext::GetHeadset()->RemoveAudioSource( &m_shipAudio );
-	g_audioSystem->StopSound( m_shipAudio.m_currentPlaybackID );
+	g_audioSystem->StopSound( m_shipAudioPlaybackID );
 
 	m_flashlight->m_transform.Reparent( nullptr );
 	m_leftHandTransform.Reparent( nullptr );
@@ -164,11 +163,9 @@ void GalleryScene::SetupWorldObjects()
 		true,
 		shipModelMatrix
 	);
-	m_shipAudio.m_attenuation = g_gameConfigBlackboard.GetValue( "shipAudioAttenuation", Vector3::FORWARD );
-	m_shipAudio.m_currentSound = g_audioSystem->CreateOrGetSound( "Data/Audio/Scifi_Racecar_Idle_Loop5.wav" );
-	m_shipAudio.m_transform.SetLocalFromMatrix( shipModelMatrix );
-	m_shipAudio.m_volume = 1.5f;
-	m_shipAudio.m_currentPlaybackID = g_audioSystem->PlaySound( m_shipAudio.m_currentSound, true, m_shipAudio.m_volume );
+	SoundPlaybackID shipSound = g_audioSystem->CreateOrGetSound( "Data/Audio/Scifi_Racecar_Idle_Loop5.wav", true );
+	m_shipAudioPlaybackID = g_audioSystem->PlaySound( shipSound, true, 1.5f );
+	OVRContext::GetHeadset()->AddSound( m_shipAudioPlaybackID );
 
 	std::vector< Mesh* > snowMikuMeshes = MeshBuilder::FromFileOBJ( "Data/Models/SnowMiku/SnowMiku.obj" );
 	Vector3 mikuPosition = GetSlotPositionCartesian( 1 );
@@ -248,8 +245,6 @@ void GalleryScene::SetupVRScene()
 	m_scene->AddRenderable( m_grid );
 	m_scene->AddRenderable( m_leftHand );
 	m_scene->AddRenderable( m_rightHand );
-
-	OVRContext::GetHeadset()->AddAudioSource( &m_shipAudio );
 }
 
 void GalleryScene::Update()
@@ -503,7 +498,7 @@ void GalleryScene::UpdateSpotLightTransform()
 void GalleryScene::UpdateAudioSource()
 {
 	Matrix44 shipMatrix =  m_ship->GetModelMatrix();
-	m_shipAudio.m_transform.SetLocalFromMatrix( shipMatrix );
+	g_audioSystem->SetSoundPlayback3DAttributes( m_shipAudioPlaybackID, m_ship->GetModelMatrix().GetTranslation(), Vector3::ZERO );
 }
 
 void GalleryScene::UpdateHUDText()

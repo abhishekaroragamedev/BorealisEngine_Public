@@ -31,11 +31,12 @@ void StopWatch::Reset()
 	m_intervalHPC = m_startHPC;
 }
 
-bool StopWatch::CheckAndReset()
+bool StopWatch::CheckAndReset( float newTimerSeconds /* = 0.0f */ )
 {
 	if ( m_referenceClock->GetLastFrameHPC() > m_intervalHPC )
 	{
 		Reset();
+		m_intervalHPC = m_startHPC + SecondsToPerformanceCount( newTimerSeconds );
 		return true;
 	}
 	else

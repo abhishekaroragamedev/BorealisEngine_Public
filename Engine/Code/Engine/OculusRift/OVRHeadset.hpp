@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Engine/Audio/Audio3D.hpp"
 #include "Engine/Math/Transform.hpp"
 #include "ThirdParty/OculusSDK/Include/OVR_CAPI.h"
 
@@ -11,7 +10,7 @@ class Material;
 class Texture;
 class Vector3;
 
-constexpr int OVR_AUDIO_MAX_SOURCES = 1000;
+constexpr size_t OVR_AUDIO_MAX_SOUNDS = 1000;
 
 class OVRHeadset
 {
@@ -33,8 +32,8 @@ public:
 	void EnableMSAA( unsigned int numSamples );
 	void DisableMSAA();
 	void SetBloomEnabled( bool bloomEnabled );
-	void AddAudioSource( AudioSource3D* source );
-	bool RemoveAudioSource( AudioSource3D* source );
+	void AddSound( size_t soundPlaybackID );
+	bool RemoveSound( size_t soundPlaybackID );
 	void SetMasterVolume( float volume );
 	void IncreaseMasterVolume( float volume );	// Negative value will decrease this
 
@@ -43,7 +42,7 @@ public:
 	bool IsMSAAEnabled() const;
 	bool IsBloomEnabled() const;
 	unsigned int GetMSAANumSamples() const;
-	int GetNumAudioSources() const;
+	size_t GetNumRegisteredSounds() const;
 	float GetMasterVolume() const;
 	ovrTrackingState GetTrackingState() const;
 	Transform GetTransform();
@@ -66,7 +65,7 @@ private:
 	void PrepareCompositorLayers();
 
 	void UpdateTransform();
-	void UpdateAudioSources();
+	void UpdateAudio();
 	void UpdateEyePosesInLayer();
 
 	void RenderMirrorTexture();
@@ -129,9 +128,9 @@ private:
 	Texture* m_flipYScratchTarget = nullptr;
 
 	// Audio Properties
-	AudioListener3D m_ears[ 2 ];
-	AudioSource3D* m_audioSources[ 1000 ];
-	int m_numAudioSources = 0;
+	int m_listenerID = -1;
+	size_t m_soundPlaybackIDs[ OVR_AUDIO_MAX_SOUNDS ];
+	size_t m_numSoundPlaybackIDs = 0U;
 	float m_masterVolume = 1.0f;
 
 	// World Properties

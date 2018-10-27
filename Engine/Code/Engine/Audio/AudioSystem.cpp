@@ -186,7 +186,6 @@ void AudioSystem::StopSound( SoundPlaybackID soundPlaybackID )
 	channelAssignedToSound->stop();
 }
 
-
 //-----------------------------------------------------------------------------------------------
 // Volume is in [0,1]
 //
@@ -268,7 +267,31 @@ void AudioSystem::SetSoundPlayback3DAttributes( SoundPlaybackID soundPlaybackID,
 }
 
 //-----------------------------------------------------------------------------------------------
-void AudioSystem::SetListener3DAttributes( const Vector3& position, const Vector3& velocity, const Vector3& up, const Vector3& forward )
+int AudioSystem::GetNumListeners3D() const
+{
+	int numListeners = -1;
+	FMOD_RESULT result = m_fmodSystem->get3DNumListeners( &numListeners );
+	if ( result != FMOD_OK )
+	{
+		ERROR_RECOVERABLE( "WARNING: error while getting number of 3D listeners!" );
+		return -1;
+	}
+	return numListeners;
+}
+
+//-----------------------------------------------------------------------------------------------
+void AudioSystem::SetNumListeners3D( int numListeners )
+{
+	FMOD_RESULT result = m_fmodSystem->set3DNumListeners( numListeners );
+	if ( result != FMOD_OK )
+	{
+		ERROR_RECOVERABLE( "WARNING: error while setting number of 3D listeners!" );
+		return;
+	}
+}
+
+//-----------------------------------------------------------------------------------------------
+void AudioSystem::SetListener3DAttributes( const Vector3& position, const Vector3& velocity, const Vector3& up, const Vector3& forward, int listenerID /* = 0 */ )
 {
 	FMOD_VECTOR fmodPos;
 	fmodPos.x = position.x;
@@ -290,7 +313,7 @@ void AudioSystem::SetListener3DAttributes( const Vector3& position, const Vector
 	fmodForward.y = forward.y;
 	fmodForward.z = forward.z;
 
-	FMOD_RESULT result = m_fmodSystem->set3DListenerAttributes( 0, &fmodPos, &fmodVel, &fmodForward, &fmodUp );
+	FMOD_RESULT result = m_fmodSystem->set3DListenerAttributes( listenerID, &fmodPos, &fmodVel, &fmodForward, &fmodUp );
 	if ( result != FMOD_OK )
 	{
 		ERROR_RECOVERABLE( "WARNING: error while setting 3D attributes of listener!" );

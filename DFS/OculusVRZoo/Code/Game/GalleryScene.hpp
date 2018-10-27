@@ -62,7 +62,7 @@ private:
 	Renderable* m_ship = nullptr;
 	Renderable* m_box = nullptr;
 	Renderable* m_snowMiku[ 4 ] = { nullptr, nullptr, nullptr, nullptr };
-	AudioSource3D m_shipAudio;
+	size_t m_shipAudioPlaybackID;
 	Scene* m_scene = nullptr;
 
 	// Scene gallery properties

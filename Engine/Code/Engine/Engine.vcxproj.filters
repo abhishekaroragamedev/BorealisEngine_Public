@@ -49,6 +49,12 @@
     <Filter Include="Tools\Profiler">
       <UniqueIdentifier>{57dcfb19-4053-41c7-a584-711fc2f1d421}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Networking">
+      <UniqueIdentifier>{9338dbfd-b042-4cc7-be9c-49f946bb9c16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Networking\Test">
+      <UniqueIdentifier>{e45cdab0-55e2-48e5-9c68-81ae458c8e3a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Input\XboxController.cpp">
@@ -285,9 +291,6 @@
     <ClCompile Include="Math\Ray.cpp">
       <Filter>Math</Filter>
     </ClCompile>
-    <ClCompile Include="Math\Contact.cpp">
-      <Filter>Math</Filter>
-    </ClCompile>
     <ClCompile Include="Math\OBB3.cpp">
       <Filter>Math</Filter>
     </ClCompile>
@@ -320,6 +323,45 @@
     </ClCompile>
     <ClCompile Include="Core\ThreadSafeTypes.cpp">
       <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Networking\Networking.cpp">
+      <Filter>Networking</Filter>
+    </ClCompile>
+    <ClCompile Include="Networking\NetAddress.cpp">
+      <Filter>Networking</Filter>
+    </ClCompile>
+    <ClCompile Include="Networking\TCPSocket.cpp">
+      <Filter>Networking</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\BytePacker.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Endianness.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Tools\RemoteCommandService.cpp">
+      <Filter>Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="Networking\UDPSocket.cpp">
+      <Filter>Networking</Filter>
+    </ClCompile>
+    <ClCompile Include="Networking\Socket.cpp">
+      <Filter>Networking</Filter>
+    </ClCompile>
+    <ClCompile Include="Networking\Test\UDPTest.cpp">
+      <Filter>Networking\Test</Filter>
+    </ClCompile>
+    <ClCompile Include="Networking\NetSession.cpp">
+      <Filter>Networking</Filter>
+    </ClCompile>
+    <ClCompile Include="Networking\NetConnection.cpp">
+      <Filter>Networking</Filter>
+    </ClCompile>
+    <ClCompile Include="Networking\NetMessage.cpp">
+      <Filter>Networking</Filter>
+    </ClCompile>
+    <ClCompile Include="Networking\NetPacket.cpp">
+      <Filter>Networking</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -658,6 +700,45 @@
     </ClInclude>
     <ClInclude Include="Core\ThreadSafeTypes.hpp">
       <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Networking\Networking.hpp">
+      <Filter>Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="Networking\NetAddress.hpp">
+      <Filter>Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="Networking\TCPSocket.hpp">
+      <Filter>Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\BytePacker.hpp">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Endianness.hpp">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Tools\RemoteCommandService.hpp">
+      <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Networking\UDPSocket.hpp">
+      <Filter>Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="Networking\Socket.hpp">
+      <Filter>Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="Networking\Test\UDPTest.hpp">
+      <Filter>Networking\Test</Filter>
+    </ClInclude>
+    <ClInclude Include="Networking\NetSession.hpp">
+      <Filter>Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="Networking\NetConnection.hpp">
+      <Filter>Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="Networking\NetMessage.hpp">
+      <Filter>Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="Networking\NetPacket.hpp">
+      <Filter>Networking</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

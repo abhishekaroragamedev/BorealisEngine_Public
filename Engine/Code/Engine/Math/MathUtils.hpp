@@ -23,6 +23,8 @@ bool IsDoubleGreaterThanOrEqualTo( const double number, const double numberCompa
 bool IsDoubleLesserThanOrEqualTo( const double number, const double numberCompared );
 int Max( const int a, const int b );
 int Min( const int a, const int b );
+size_t Max( const size_t a, const size_t b );
+size_t Min( const size_t a, const size_t b );
 float Max( const float a, const float b );
 float Min( const float a, const float b );
 int Abs( int a );

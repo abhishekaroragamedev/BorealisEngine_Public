@@ -15,6 +15,7 @@ public:
 	std::string m_name = "";
 	std::string m_description = "";
 	command_cb m_callback = nullptr;
+	bool m_isRestricted = false;
 
 	void operator=( const CommandDefinition& comparedCommand )
 	{
@@ -50,8 +51,9 @@ void WriteCommandHistoryToFile();
 
 #pragma region Command Class Functions
 
-Command::Command( const char* str )
-	:	m_argumentTokens( std::string( str ), " ", true )
+Command::Command( const char* str, bool isRemote /* = false */ )
+	:	m_argumentTokens( std::string( str ), " ", true ),
+		m_isRemote( isRemote )
 {
 	std::vector< std::string > argumentTokenVector = m_argumentTokens.GetTokens();
 	m_name = argumentTokenVector[ 0 ];
@@ -78,6 +80,11 @@ std::string Command::GetNextString()
 	return "";
 }
 
+bool Command::IsRemote() const
+{
+	return m_isRemote;
+}
+
 #pragma endregion
 
 #pragma region Command Helper Functions
@@ -92,11 +99,12 @@ void CommandShutdown()
 	WriteCommandHistoryToFile();
 }
 
-void CommandRegister( const char* name, command_cb cb, const char* description /*= ""*/ )
+void CommandRegister( const char* name, command_cb cb, const char* description /* = "" */, bool isRestricted /* = false */ )
 {
 	g_Definitions[ g_definitionCount ].m_name = std::string( name );
 	g_Definitions[ g_definitionCount ].m_description = std::string( description );
 	g_Definitions[ g_definitionCount ].m_callback = cb;
+	g_Definitions[ g_definitionCount ].m_isRestricted = isRestricted;
 	g_definitionCount++;
 }
 
@@ -119,15 +127,20 @@ void CommandUnregister( const char* name )
 	}
 }
 
-bool CommandRun( const char* command )
+bool CommandRun( const char* command, bool isRemote /* = false */ )
 {
-	Command commandInstance = Command( command );
+	Command commandInstance = Command( command, isRemote );
 	AddToCommandHistory( command );
 
 	for ( int commandIndex = 0; commandIndex < g_definitionCount; commandIndex++ )
 	{
 		if ( commandInstance.GetName() == g_Definitions[ commandIndex ].m_name )
 		{
+			if ( commandInstance.IsRemote() && g_Definitions[ commandIndex ].m_isRestricted )
+			{
+				ConsolePrintf( Rgba::RED, "ERROR: Restricted command entered." );
+				return false;
+			}
 			return g_Definitions[ commandIndex ].m_callback( commandInstance );
 		}
 	}
@@ -240,8 +253,13 @@ bool HelpCommand( Command& helpCommand )
 		
 		for ( CommandDefinition commandDefinition : g_Definitions )
 		{
-			if (commandDefinition.IsRegistered() )
+			if ( commandDefinition.IsRegistered() )
 			{
+				if ( helpCommand.IsRemote() && commandDefinition.m_isRestricted )
+				{
+					DevConsoleHooksDisable();
+				}
+
 				std::string commandDescription = commandDefinition.m_description;
 				if ( commandDescription == "" )
 				{
@@ -249,6 +267,11 @@ bool HelpCommand( Command& helpCommand )
 				}
 
 				ConsolePrintf( ( commandDefinition.m_name + ": " + commandDescription ).c_str() );
+
+				if ( helpCommand.IsRemote() && commandDefinition.m_isRestricted )
+				{
+					DevConsoleHooksEnable();
+				}
 			}
 		}
 

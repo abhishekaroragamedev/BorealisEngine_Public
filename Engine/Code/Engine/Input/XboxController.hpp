@@ -6,6 +6,10 @@
 constexpr int XBOXCONTROLLER_NUM_JOYSTICKS = 2;
 constexpr int XBOXCONTROLLER_JOYSTICK_LEFT_INDEX = 0;
 constexpr int XBOXCONTROLLER_JOYSTICK_RIGHT_INDEX = 1;
+constexpr float XBOXCONTROLLER_TRIGGER_OFF_HIGHEST = 0.45f;
+constexpr float XBOXCONTROLLER_TRIGGER_ON_LOWEST = 0.55f;
+constexpr float XBOXCONTROLLER_ANALOG_OFF_HIGHEST = 0.9f;
+constexpr float XBOXCONTROLLER_ANALOG_ON_LOWEST = 0.95f;
 
 enum InputXboxControllerMappings
 {
@@ -23,6 +27,16 @@ enum InputXboxControllerMappings
 	GAMEPAD_B,
 	GAMEPAD_X,
 	GAMEPAD_Y,
+	ANALOG_L_LEFT,
+	ANALOG_L_DOWN,
+	ANALOG_L_RIGHT,
+	ANALOG_L_UP,
+	ANALOG_R_LEFT,
+	ANALOG_R_DOWN,
+	ANALOG_R_RIGHT,
+	ANALOG_R_UP,
+	TRIGGER_L,
+	TRIGGER_R,
 	NUM_BUTTONS
 };
 
@@ -57,6 +71,10 @@ protected:
 	void SetControllerState();
 	void SetButtonStates( unsigned short buttonState );
 	void SetTriggerStates( unsigned char leftTriggerValue, unsigned char rightTriggerValue );
+	void SetButtonStatesFromAnalogStates();
+	void SetTriggerButtonStatesFromAnalogStates();
+	void SetStickButtonStatesFromAnalogStates();
+	void SetButtonStateFromAnalogStateAndThreshold( InputXboxControllerMappings key, float currentValue, float offThreshold, float onThreshold, bool compareNegative = false );
 	void ResetKeyStates();
 
 protected:

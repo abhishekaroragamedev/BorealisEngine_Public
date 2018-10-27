@@ -11,7 +11,7 @@ public:
 	void SetClock( const Clock* newReferenceClock = nullptr );
 	bool SetTimer( float seconds );
 	void Reset();
-	bool CheckAndReset();
+	bool CheckAndReset( float newTimerSeconds = 0.0f );
 	bool Decrement();
 	unsigned int DecrementAll();
 	//void Pause();

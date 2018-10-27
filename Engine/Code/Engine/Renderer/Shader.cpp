@@ -1,3 +1,4 @@
+#include "Engine/Core/ErrorWarningAssert.hpp"
 #include "Engine/Core/XmlUtilities.hpp"
 #include "Engine/Renderer/Shader.hpp"
 #include "Engine/Renderer/ShaderPass.hpp"
@@ -24,6 +25,23 @@ Shader::~Shader()
 	{
 		delete pass;
 		pass = nullptr;
+	}
+}
+
+void Shader::LoadFromXML( const tinyxml2::XMLElement& shaderElement )
+{
+	m_name = ParseXmlAttribute( shaderElement, "name", m_name );
+
+	size_t passCount = 0;
+	for ( const tinyxml2::XMLElement* childElement = shaderElement.FirstChildElement(); childElement != nullptr; childElement = childElement->NextSiblingElement() )
+	{
+		m_passes[ passCount ]->LoadFromXML( *childElement );
+		passCount++;
+	}
+
+	if ( passCount != m_passes.size() )
+	{
+		ERROR_RECOVERABLE( "WARNING: Shader::LoadFromXML(): Number of passes in new XML not same as during initialization. This is not supported. Please reload the application for deterministic behavior." );
 	}
 }
 

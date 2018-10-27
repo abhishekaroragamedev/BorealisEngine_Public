@@ -26,6 +26,9 @@
 // UNIMPLEMENTED Macro
 #define UNIMPLEMENTED()  TODO( "IMPLEMENT: " QUOTE(__FILE__) " (" QUOTE(__LINE__) ")" ); //ASSERT(0)
 
+// BIT_SHIFT Macro
+#define BIT_SHIFT( x ) 1<<x
+
 extern Blackboard g_gameConfigBlackboard;
 
 constexpr char* ENGINE_NAME = "Borealis Engine";

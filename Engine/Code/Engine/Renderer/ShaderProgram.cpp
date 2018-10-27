@@ -16,17 +16,7 @@ ShaderProgram::ShaderProgram()
 
 ShaderProgram::ShaderProgram( const tinyxml2::XMLElement& shaderProgramElement )
 {
-	m_programHandle = ParseXmlAttribute( shaderProgramElement, "id", UINT_MAX );
-
-	std::string defines = ParseXmlAttribute( shaderProgramElement, "define", "" );
-	std::string fileName = ParseXmlAttribute( shaderProgramElement, "fileName", "" );
-
-	if ( fileName != "" )
-	{
-		LoadFromFiles( fileName.c_str(), defines );
-	}
-
-	FillShaderInfo();
+	LoadFromXML( shaderProgramElement );
 }
 
 ShaderProgram::ShaderProgram( const ShaderProgram& copy )
@@ -39,6 +29,27 @@ ShaderProgram::~ShaderProgram()
 {
 	delete m_info;
 	m_info = nullptr;
+}
+
+void ShaderProgram::LoadFromXML( const tinyxml2::XMLElement& shaderProgramElement )
+{
+	if ( m_info != nullptr )
+	{
+		delete m_info;
+		m_info = nullptr;
+	}
+
+	m_programHandle = ParseXmlAttribute( shaderProgramElement, "id", UINT_MAX );
+
+	std::string defines = ParseXmlAttribute( shaderProgramElement, "define", "" );
+	std::string fileName = ParseXmlAttribute( shaderProgramElement, "fileName", "" );
+
+	if ( fileName != "" )
+	{
+		LoadFromFiles( fileName.c_str(), defines );
+	}
+
+	FillShaderInfo();
 }
 
 void ShaderProgram::FillShaderInfo()
@@ -216,6 +227,7 @@ GLuint ShaderProgram::LoadShaderFromText( const char* shaderText, GLenum type, c
 	GUARANTEE_RECOVERABLE( shaderID != NULL, "ShaderProgram::LoadShaderFromText: Unable to instantiate shader! Aborting..." );
 
 	std::string finalShaderText = std::string( shaderText );
+	// Includes not supported
 	finalShaderText = InjectDefinesIntoShader( shaderText, semiColonDelimitedDefines );
 	const char* finalShaderTextAsCStr = finalShaderText.c_str();
 
@@ -265,17 +277,14 @@ bool ShaderProgram::LoadFromFiles( const char* root, const std::string& semiColo
 
 GLuint ShaderProgram::LoadShaderFromFile( const char* fileName, GLenum type, const std::string& semiColonDelimitedDefines )
 {
-	char *src = ( char* ) FileReadToNewBuffer( fileName );
-	GUARANTEE_RECOVERABLE( src != nullptr, "ShaderProgram::LoadShaderFromFile: Cannot find shader file! Aborting..." );
-
 	// Create a shader
 	GLuint shaderID = glCreateShader( type );
 	GUARANTEE_RECOVERABLE( shaderID != NULL, "ShaderProgram::LoadShaderFromFile: Unable to instantiate shader! Aborting..." );
 
-	std::string finalShaderText =  std::string( src );
-	finalShaderText = InjectDefinesIntoShader( src, semiColonDelimitedDefines );
-
+	std::string finalShaderText =  ExpandIncludesInShader( fileName, std::vector< std::string >() );
 	const char* finalShaderTextAsCStr = finalShaderText.c_str();
+	finalShaderText = InjectDefinesIntoShader( finalShaderTextAsCStr, semiColonDelimitedDefines );
+	finalShaderTextAsCStr = finalShaderText.c_str();
 
 	// Bind source to it, and compile
 	// You can add multiple strings to a shader – they will 
@@ -295,9 +304,45 @@ GLuint ShaderProgram::LoadShaderFromFile( const char* fileName, GLenum type, con
 		shaderID = NULL;
 	}
 
-	free( src );
-
 	return shaderID;
+}
+
+std::string ShaderProgram::ExpandIncludesInShader( const char* filename, std::vector<std::string>& visitedFilenames )
+{
+	const char* shaderText = reinterpret_cast< const char* >( FileReadToNewBuffer( filename ) );
+	GUARANTEE_OR_DIE( ( shaderText != nullptr ), "ERROR: ShaderProgram::ExpandIncludesInShader(): Cannot open shader file specified. Aborting..." );
+
+	visitedFilenames.push_back( std::string( filename ) );
+	std::string directory = GetDirectoryFromFilePath( filename );
+
+	std::string shaderTextString = std::string( shaderText );
+	while ( shaderTextString.find( "#include" ) != std::string::npos )
+	{
+		// TODO: Handle comments and string literals that enclose "#include"
+		size_t seekIndex = shaderTextString.find( "#include" );
+		size_t includeLineEndIndex = shaderTextString.find( '\n', seekIndex );
+
+		size_t filenameStartIndex = seekIndex + std::string( "#include " ).size();
+		GUARANTEE_OR_DIE( ( shaderTextString[ filenameStartIndex ] == '\"' ), "ERROR: ShaderProgram::ExpandIncludesInShader(): Quotes not found after include. Aborting..." );
+		size_t filenameEndIndex = shaderTextString.find( '\"', ( filenameStartIndex + 1 ) );
+		
+		GUARANTEE_OR_DIE( ( filenameStartIndex < includeLineEndIndex ), "ERROR: ShaderProgram::ExpandIncludesInShader(): Includes not allowed to be multiline. Aborting..." );
+		GUARANTEE_OR_DIE( ( filenameEndIndex < includeLineEndIndex ), "ERROR: ShaderProgram::ExpandIncludesInShader(): Includes not allowed to be multiline. Aborting..." );
+		GUARANTEE_OR_DIE( ( filenameEndIndex > ( filenameStartIndex + 1 ) ), "ERROR: ShaderProgram::ExpandIncludesInShader(): Include filename not provided. Aborting..." );
+
+		std::string includeFilename = shaderTextString.substr( ( filenameStartIndex + 1 ), ( filenameEndIndex - ( filenameStartIndex + 1 ) ) );
+		includeFilename = directory + "/" + includeFilename;
+
+		if ( std::find( visitedFilenames.begin(), visitedFilenames.end(), includeFilename ) == visitedFilenames.end() )
+		{
+			std::string includeShaderTextString = ExpandIncludesInShader( includeFilename.c_str(), visitedFilenames );
+			shaderTextString.insert( ( includeLineEndIndex + 1 ), includeShaderTextString );
+		}
+
+		shaderTextString.erase( seekIndex, ( includeLineEndIndex - seekIndex ) );
+	}
+
+	return shaderTextString;
 }
 
 std::string ShaderProgram::InjectDefinesIntoShader( const char* shaderText, const std::string& semiColonDelimitedDefines )

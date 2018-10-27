@@ -34,7 +34,7 @@ public:
 
 private:
 	Texture();								// For use as a render target
-	Texture( const std::string& filePath, unsigned int mipLevels = 1U, bool loadAsync = false ); // Use renderer->CreateOrGetTexture() instead!
+	Texture( const std::string& filePath, unsigned int mipLevels = 1U, bool loadAsync = true ); // Use renderer->CreateOrGetTexture() instead!
 
 public:
 	~Texture();
@@ -43,7 +43,7 @@ public:
 
 private:
 	void CreateFromImage( const Image& image, unsigned int mipLevels = 1U );
-	void CreateFromFile( const std::string& imageFilePath, unsigned int mipLevels = 1U, bool loadAsync = false );
+	void CreateFromFile( const std::string& imageFilePath, unsigned int mipLevels = 1U, bool loadAsync = true );
 	bool CreateRenderTarget( unsigned int width, unsigned int height, TextureFormat format );
 	bool CreateMultiSampleTarget( unsigned int width, unsigned int height, TextureFormat format, unsigned int numSamples );
 	inline bool IsValid() const { return ( m_textureID != 0U ); };

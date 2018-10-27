@@ -6,6 +6,7 @@
 #include "Engine/Math/IntRange.hpp"
 #include "Engine/Renderer/Camera.hpp"
 #include "Engine/Tools/Command.hpp"
+#include "Game/EngineBuildPreferences.hpp"
 #include <string>
 #include <vector>
 
@@ -13,14 +14,17 @@ class InputSystem;
 class Renderer;
 
 constexpr float CONSOLE_OVERLAY_RENDER_ALPHA = 0.5f;
-constexpr float SELECTED_TEXT_OVERLAY_RENDER_ALPHA = 0.75f;
 constexpr float CONSOLE_SCROLLBAR_THICKNESS = 0.025f;
+constexpr float HORIZONTAL_ARROW_KEY_INPUT_DELAY_REQUIRED = 1.0f;
+constexpr float HORIZONTAL_ARROW_KEY_INPUT_DELAY_INCREMENT_FACTOR = 0.1f;
+constexpr float SELECTED_TEXT_OVERLAY_RENDER_ALPHA = 0.75f;
 constexpr float TYPED_TEXT_CURSOR_FLASH_TIME_SECONDS = 0.5f;
 constexpr float TYPED_TEXT_PADDING = -0.01f;
 constexpr float TYPED_TEXT_CELL_HEIGHT = 0.03f;
 constexpr float TYPED_TEXT_CURSOR_WIDTH = 0.01f;
-constexpr float HORIZONTAL_ARROW_KEY_INPUT_DELAY_REQUIRED = 1.0f;
-constexpr float HORIZONTAL_ARROW_KEY_INPUT_DELAY_INCREMENT_FACTOR = 0.1f;
+constexpr size_t OUTPUT_TEXT_MAX_LINES = 1000;
+
+typedef void (*devconsole_cb)( const std::string&, void* );
 
 struct ColoredString
 {
@@ -81,6 +85,7 @@ private:
 	void RenderOutput( const Renderer& renderer ) const;
 	void RenderOutputText( const Renderer& renderer, const AABB2& outputBounds ) const;
 	void RenderOutputTextScrollbar( const Renderer& renderer, const AABB2& outputBounds ) const;
+	void RenderRCSWidget( const Renderer& renderer ) const;	// RCS - Remote Command Service
 
 private:
 	static const Rgba NORMAL_OVERLAY_COLOR;
@@ -120,6 +125,7 @@ bool ClearCommand( Command& command );
 bool SaveLogCommand( Command& command );
 bool EchoWithColorCommand( Command& command );
 bool ClearCommandHistoryCommand( Command& command );
+bool CloneProcessCommand( Command& command );
 
 bool LogTestCommand( Command& command );
 bool LogFlushTestCommand( Command& command );
@@ -129,5 +135,11 @@ bool LogShowAllCommand( Command& command );
 bool LogHideAllCommand( Command& command );
 bool LogTimestampCommand( Command& command );
 
-// Log Hook
+// For hooks into the DevConsole output
+void DevConsoleHook( devconsole_cb callback, void* userData );
+void DevConsoleUnhook( devconsole_cb callback, void* userData );
+void DevConsoleHooksEnable();
+void DevConsoleHooksDisable();
+
+// DevConsole is hooked into the Log System
 void DevConsoleLog( const Log& log, void* );

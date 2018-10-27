@@ -415,15 +415,15 @@ void Renderer::BeginFrame( const float screenWidth, const float screenHeight )
 
 void Renderer::EndFrame() const
 {
-	HWND activeWindow = GetActiveWindow();
-	HDC activeDeviceDisplayContext = GetDC( activeWindow );
+	HWND appWindow = *( reinterpret_cast< HWND* >( Window::GetInstance()->GetHandle() ) );
+	HDC displayContext = GetDC( appWindow );
 	if ( m_takeScreenshotThisFrame )
 	{
 		SaveScreenshot();
 	}
 
 	CopyFrameBuffer( nullptr, m_currentCamera->GetFrameBuffer() );
-	SwapBuffers( activeDeviceDisplayContext );
+	SwapBuffers( displayContext );
 }
 
 void Renderer::UpdateTimeUBOWithFrameTime()
@@ -737,34 +737,8 @@ ShaderProgram* Renderer::CreateOrGetShaderProgramFromRawStrings( const char* sha
 
 void Renderer::ReloadAllFileShaders()		// Only reload shaders instantiated from files; raw string shaders cannot be hot loaded as they are present in C++ code
 {
-	for ( std::map< std::string, Material* >::iterator mapIterator = m_loadedMaterialsFromFileByName.begin(); mapIterator != m_loadedMaterialsFromFileByName.end(); mapIterator++ )
-	{
-		if ( mapIterator->second != nullptr )		// Deallocate memory for Material objects (in main memory)
-		{
-			delete mapIterator->second;
-			mapIterator->second = nullptr;
-		}
-	}
-
-	for ( std::map< std::string, Shader* >::iterator mapIterator = m_loadedShadersFromFileByName.begin(); mapIterator != m_loadedShadersFromFileByName.end(); mapIterator++ )
-	{
-		if ( std::find( m_namesOfShadersLoadedFromStrings.begin(), m_namesOfShadersLoadedFromStrings.end(), mapIterator->first ) == m_namesOfShadersLoadedFromStrings.end() )
-		{
-			if ( mapIterator->second != nullptr )		// Deallocate memory for Shader objects (in main memory)
-			{
-				for ( unsigned int passIndex = 0U; passIndex < mapIterator->second->GetPassCount(); passIndex++ )
-				{
-					delete mapIterator->second->GetPass( passIndex )->m_program;	// Delete the ShaderPrograms associated with this shader, as it's not referenced by the Renderer
-					mapIterator->second->GetPass( passIndex )->m_program = nullptr;
-				}
-
-				delete mapIterator->second;
-				mapIterator->second = nullptr;
-			}
-		}
-	}
-	LoadShadersFromFile();
-	LoadMaterialsFromFile();
+	ReloadShadersFromFile();
+	ReloadMaterialsFromFile();
 
 	for ( std::map< std::string, ShaderProgram* >::iterator mapIterator = m_loadedShaderProgramsByName.begin(); mapIterator != m_loadedShaderProgramsByName.end(); mapIterator++ )
 	{
@@ -774,6 +748,50 @@ void Renderer::ReloadAllFileShaders()		// Only reload shaders instantiated from 
 			{
 				// Assumes the Invalid shader is initialized before anything else and is not invalid itself
 				mapIterator->second->LoadFromFiles(( std::string( SHADERS_RELATIVE_PATH ) + INVALID_SHADER_NAME  ).c_str(), "" );
+			}
+		}
+	}
+}
+
+void Renderer::ReloadShadersFromFile()
+{
+	tinyxml2::XMLDocument xmlDoc;
+	tinyxml2::XMLError loadSuccess = xmlDoc.LoadFile( SHADERS_XML_FILEPATH );
+	if ( loadSuccess == tinyxml2::XMLError::XML_SUCCESS )
+	{
+		tinyxml2::XMLElement* rootElement = xmlDoc.FirstChildElement();
+		for ( const tinyxml2::XMLElement* shaderElement = rootElement->FirstChildElement(); shaderElement != nullptr; shaderElement = shaderElement->NextSiblingElement() )
+		{
+			std::string shaderName = ParseXmlAttribute( *shaderElement, "name", "" );
+			if ( m_loadedShadersFromFileByName.find( shaderName ) != m_loadedShadersFromFileByName.end() )
+			{
+				m_loadedShadersFromFileByName[ shaderName ]->LoadFromXML( *shaderElement );
+			}
+			else
+			{
+				ERROR_RECOVERABLE( "WARNING: Renderer::ReloadShadersFromFile() - Loading new Shaders on the fly not supported. New Shader will be skipped." )
+			}
+		}
+	}
+}
+
+void Renderer::ReloadMaterialsFromFile()
+{
+	tinyxml2::XMLDocument xmlDoc;
+	tinyxml2::XMLError loadSuccess = xmlDoc.LoadFile( MATERIALS_XML_FILEPATH );
+	if ( loadSuccess == tinyxml2::XMLError::XML_SUCCESS )
+	{
+		tinyxml2::XMLElement* rootElement = xmlDoc.FirstChildElement();
+		for ( const tinyxml2::XMLElement* materialElement = rootElement->FirstChildElement(); materialElement != nullptr; materialElement = materialElement->NextSiblingElement() )
+		{
+			std::string materialName = ParseXmlAttribute( *materialElement, "name", "" );
+			if ( m_loadedMaterialsFromFileByName.find( materialName ) != m_loadedMaterialsFromFileByName.end() )
+			{
+				m_loadedMaterialsFromFileByName[ materialName ]->LoadFromXML( *materialElement, true );
+			}
+			else
+			{
+				ERROR_RECOVERABLE( "WARNING: Renderer::ReloadMaterialsFromFile() - Loading new Materials on the fly not supported. New Material will be skipped." )
 			}
 		}
 	}
@@ -1296,7 +1314,7 @@ void Renderer::ApplyEffect( Material* effectMaterial, Camera* useCamera /* = nul
 		DisableDepth();
 		SetCamera( effectCamera );
 
-		DrawFullScreenImmediate( *effectMaterial, passIndex );
+		DrawFullScreenImmediate( *effectMaterial, Rgba::WHITE, passIndex );
 
 		std::swap( m_effectsSourceTarget, m_effectsScratchTarget );
 	}
@@ -1376,7 +1394,7 @@ void Renderer::DrawMeshImmediate( const Vertex_3DPCU* verts, int numVerts, const
 	DrawMesh( m_immediateMesh );
 }
 
-void Renderer::DrawFullScreenImmediate( Material& material, unsigned int passIndex /* = 0U */ )
+void Renderer::DrawFullScreenImmediate( Material& material, const Rgba& color /* = Rgba::WHITE */, unsigned int passIndex /* = 0U */ )
 {
 	BindMaterial( material, passIndex );
 
@@ -1384,7 +1402,7 @@ void Renderer::DrawFullScreenImmediate( Material& material, unsigned int passInd
 
 	MeshBuilder screenBuilder;	// NDC space
 	screenBuilder.Begin( DrawPrimitiveType::TRIANGLES );
-	screenBuilder.SetColor( Rgba::WHITE );
+	screenBuilder.SetColor( color );
 
 	screenBuilder.SetUVs( currentViewport.mins.x, currentViewport.mins.y );	// Mins
 	screenBuilder.PushVertex( -1.0f, -1.0f, 0.0f );

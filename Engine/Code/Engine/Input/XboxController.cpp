@@ -14,6 +14,7 @@ XboxController::XboxController()
 	m_rightTriggerValueNormalized = 0.0f;
 	m_vibrationStateLeftMotor = 0;
 	m_vibrationStateRightMotor = 0;
+	ResetKeyStates();
 }
 
 XboxController::XboxController( int controllerId )
@@ -24,6 +25,7 @@ XboxController::XboxController( int controllerId )
 	m_rightTriggerValueNormalized = 0.0f;
 	m_vibrationStateLeftMotor = 0;
 	m_vibrationStateRightMotor = 0;
+	ResetKeyStates();
 }
 
 XboxController::~XboxController()
@@ -165,6 +167,8 @@ void XboxController::SetControllerState()
 		JoystickState rightJoystickState = ConstructRightJoystickState( rightStickX, rightStickY );
 		m_xboxAnalogSticks[ XBOXCONTROLLER_JOYSTICK_LEFT_INDEX ].BeginFrame( leftJoystickState );
 		m_xboxAnalogSticks[ XBOXCONTROLLER_JOYSTICK_RIGHT_INDEX ].BeginFrame( rightJoystickState );
+
+		SetButtonStatesFromAnalogStates();
 	}
 	else
 	{
@@ -176,7 +180,7 @@ void XboxController::SetButtonStates( unsigned short buttonStateBitFlag )
 {
 	WORD buttonStateBitMask = 1;
 
-	for ( int i = 0; i < InputXboxControllerMappings::NUM_BUTTONS; i++ )
+	for ( int i = 0; i < 14; i++ )	// 14 instead of NUM_BUTTONS because of added analog buttons
 	{
 		if ( i == 10 )
 		{
@@ -208,6 +212,58 @@ void XboxController::SetTriggerStates( unsigned char leftTriggerValue, unsigned 
 {
 	m_leftTriggerValueNormalized = RangeMapFloat( static_cast<float> ( leftTriggerValue ), 0, 255, 0, 1 );
 	m_rightTriggerValueNormalized = RangeMapFloat( static_cast<float> ( rightTriggerValue ), 0, 255, 0, 1 );
+}
+
+void XboxController::SetButtonStatesFromAnalogStates()
+{
+	SetTriggerButtonStatesFromAnalogStates();
+	SetStickButtonStatesFromAnalogStates();
+}
+
+void XboxController::SetTriggerButtonStatesFromAnalogStates()
+{
+	SetButtonStateFromAnalogStateAndThreshold( InputXboxControllerMappings::TRIGGER_L, m_leftTriggerValueNormalized, XBOXCONTROLLER_TRIGGER_OFF_HIGHEST, XBOXCONTROLLER_TRIGGER_ON_LOWEST );
+	SetButtonStateFromAnalogStateAndThreshold( InputXboxControllerMappings::TRIGGER_R, m_rightTriggerValueNormalized, XBOXCONTROLLER_TRIGGER_OFF_HIGHEST, XBOXCONTROLLER_TRIGGER_ON_LOWEST );
+}
+
+void XboxController::SetStickButtonStatesFromAnalogStates()
+{
+	float lStickXPos = m_xboxAnalogSticks[ 0 ].GetPosition().x;
+	float lStickYPos = m_xboxAnalogSticks[ 0 ].GetPosition().y;
+	SetButtonStateFromAnalogStateAndThreshold( InputXboxControllerMappings::ANALOG_L_LEFT, lStickXPos, XBOXCONTROLLER_ANALOG_OFF_HIGHEST, XBOXCONTROLLER_ANALOG_ON_LOWEST, true );
+	SetButtonStateFromAnalogStateAndThreshold( InputXboxControllerMappings::ANALOG_L_DOWN, lStickYPos, XBOXCONTROLLER_ANALOG_OFF_HIGHEST, XBOXCONTROLLER_ANALOG_ON_LOWEST, true );
+	SetButtonStateFromAnalogStateAndThreshold( InputXboxControllerMappings::ANALOG_L_RIGHT, lStickXPos, XBOXCONTROLLER_ANALOG_OFF_HIGHEST, XBOXCONTROLLER_ANALOG_ON_LOWEST );
+	SetButtonStateFromAnalogStateAndThreshold( InputXboxControllerMappings::ANALOG_L_UP, lStickYPos, XBOXCONTROLLER_ANALOG_OFF_HIGHEST, XBOXCONTROLLER_ANALOG_ON_LOWEST );
+
+	float rStickXPos = m_xboxAnalogSticks[ 1 ].GetPosition().x;
+	float rStickYPos = m_xboxAnalogSticks[ 1 ].GetPosition().y;
+	SetButtonStateFromAnalogStateAndThreshold( InputXboxControllerMappings::ANALOG_R_LEFT, rStickXPos, XBOXCONTROLLER_ANALOG_OFF_HIGHEST, XBOXCONTROLLER_ANALOG_ON_LOWEST, true );
+	SetButtonStateFromAnalogStateAndThreshold( InputXboxControllerMappings::ANALOG_R_DOWN, rStickYPos, XBOXCONTROLLER_ANALOG_OFF_HIGHEST, XBOXCONTROLLER_ANALOG_ON_LOWEST, true );
+	SetButtonStateFromAnalogStateAndThreshold( InputXboxControllerMappings::ANALOG_R_RIGHT, rStickXPos, XBOXCONTROLLER_ANALOG_OFF_HIGHEST, XBOXCONTROLLER_ANALOG_ON_LOWEST );
+	SetButtonStateFromAnalogStateAndThreshold( InputXboxControllerMappings::ANALOG_R_UP, rStickYPos, XBOXCONTROLLER_ANALOG_OFF_HIGHEST, XBOXCONTROLLER_ANALOG_ON_LOWEST );
+}
+
+void XboxController::SetButtonStateFromAnalogStateAndThreshold( InputXboxControllerMappings key, float currentValue, float offThreshold, float onThreshold, bool compareNegative /* = false */ )
+{
+	bool releaseCondition = ( compareNegative )? ( currentValue > -offThreshold ) : ( currentValue < offThreshold );
+	bool pressCondition = ( compareNegative )? ( currentValue < -onThreshold ) : ( currentValue > onThreshold );
+
+	if ( releaseCondition )
+	{
+		if ( m_keyState[ key ].m_isDown )
+		{
+			m_keyState[ key ].m_wasJustReleased = true;
+		}
+		m_keyState[ key ].m_isDown = false;
+	}
+	else if ( pressCondition )
+	{
+		if ( !m_keyState[ key ].m_isDown )
+		{
+			m_keyState[ key ].m_wasJustPressed = true;
+		}
+		m_keyState[ key ].m_isDown = true;
+	}
 }
 
 JoystickState XboxController::ConstructLeftJoystickState( short lStickX, short lStickY ) const

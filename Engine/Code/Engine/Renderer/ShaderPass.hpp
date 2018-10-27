@@ -50,6 +50,8 @@ public:
 	ShaderPass( const tinyxml2::XMLElement& shaderPassElement );
 	~ShaderPass();
 
+	void LoadFromXML( const tinyxml2::XMLElement& shaderPassElement );
+
 	void SetProgram( ShaderProgram* shaderProgram );
 
 	void EnableColorBlending( RendererBlendOperation operation, RendererBlendFactor sourceFactor, RendererBlendFactor destinationFactor );

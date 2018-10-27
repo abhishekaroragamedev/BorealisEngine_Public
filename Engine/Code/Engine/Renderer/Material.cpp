@@ -377,9 +377,26 @@ Material::Material( const Material& copyMaterial )
 
 Material::Material( const tinyxml2::XMLElement& materialElement )
 {
+	LoadFromXML( materialElement );
+}
+
+Material::~Material()
+{
+	DeleteAllMaterialData();
+}
+
+void Material::LoadFromXML( const tinyxml2::XMLElement& materialElement, bool isReload /* = false */ )
+{
+	if ( isReload )
+	{
+		DeleteAllMaterialData();
+	}
+
+	std::string shaderName = ParseXmlAttribute( materialElement, "shader", DEFAULT_SHADER_NAME );
+	m_shader = Renderer::GetInstance()->CreateOrGetShader( shaderName );
+
 	m_isInstance = false;
-	m_shader = Renderer::GetInstance()->CreateOrGetShader( ParseXmlAttribute( materialElement, "shader", DEFAULT_SHADER_NAME ) );
-	m_lightProperties = new ObjectLightPropertiesUBO;
+	m_lightProperties = new ObjectLightPropertiesUBO();
 
 	unsigned int textureCount = 0U;
 
@@ -391,8 +408,8 @@ Material::Material( const tinyxml2::XMLElement& materialElement )
 			std::string textureFileName = ParseXmlAttribute( *childElement, "fileName", "Texture_Default.png" );
 			unsigned int mipLevel = ParseXmlAttribute( *childElement, "mip", 1U );
 			SetTextureAndSampler(	textureCount,
-									Renderer::GetInstance()->CreateOrGetTexture( textureFileName, mipLevel ),
-									Renderer::GetInstance()->GetDefaultSampler( ( mipLevel > 1U ) )	// Use a MipMap Linear sampler if mip level > 1
+				Renderer::GetInstance()->CreateOrGetTexture( textureFileName, mipLevel ),
+				Renderer::GetInstance()->GetDefaultSampler( ( mipLevel > 1U ) )	// Use a MipMap Linear sampler if mip level > 1
 			);
 			textureCount++;
 		}
@@ -428,23 +445,6 @@ Material::Material( const tinyxml2::XMLElement& materialElement )
 		}
 	}
 	ErasePropertyBlocksForUnownedBlocks();
-}
-
-Material::~Material()
-{
-	delete m_lightProperties;
-	m_lightProperties = nullptr;
-
-	for ( std::map< unsigned int, std::vector< PropertyBlock* > >::iterator blockIterator = m_propertyBlocksByProgram.begin(); blockIterator != m_propertyBlocksByProgram.end(); blockIterator++ )
-	{
-		for ( PropertyBlock* block : blockIterator->second )
-		{
-			delete block;
-			block = nullptr;
-		}
-	}
-
-	DeleteAllProperties();
 }
 
 void Material::InitializeMaterialPropertiesFromShader()
@@ -648,6 +648,24 @@ int Material::GetLayer( unsigned int passIndex ) const
 	return m_shader->GetPass( passIndex )->GetLayer();
 }
 
+void Material::DeleteAllMaterialData()
+{
+	delete m_lightProperties;
+	m_lightProperties = nullptr;
+
+	for ( std::map< unsigned int, std::vector< PropertyBlock* > >::iterator blockIterator = m_propertyBlocksByProgram.begin(); blockIterator != m_propertyBlocksByProgram.end(); blockIterator++ )
+	{
+		for ( PropertyBlock* block : blockIterator->second )
+		{
+			delete block;
+			block = nullptr;
+		}
+	}
+	m_propertyBlocksByProgram.clear();
+
+	DeleteAllProperties();
+}
+
 void Material::DeleteAllProperties()
 {
 	for ( size_t propertyIndex = 0; propertyIndex < m_properties.size(); propertyIndex++ )
@@ -655,6 +673,7 @@ void Material::DeleteAllProperties()
 		delete m_properties[ propertyIndex ];
 		m_properties[ propertyIndex ] = nullptr;
 	}
+	m_properties.clear();
 }
 
 void Material::DeleteExistingProperty( const std::string& name )

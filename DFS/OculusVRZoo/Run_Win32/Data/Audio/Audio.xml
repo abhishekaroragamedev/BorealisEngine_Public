@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Audio>
 	<Settings
-		dopplerScale="0.01"
-		distanceFactor="0.01"
-		rollOffScale="0.01"
+		dopplerScale="1.0"
+		distanceFactor="1.0"
+		rollOffScale="1.0"
 	/>
 	<Clips>
-			<Clip filePath="Scifi_Racecar_Idle_Loop5.wav" />
+			<Clip filePath="Scifi_Racecar_Idle_Loop5.wav" spatial="true" />
 	</Clips>
 	<Groups>
 	</Groups>

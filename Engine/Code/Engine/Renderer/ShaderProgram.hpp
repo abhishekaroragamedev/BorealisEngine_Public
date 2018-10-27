@@ -19,6 +19,7 @@ public:
 	ShaderProgram( const ShaderProgram& copy );
 	~ShaderProgram();
 
+	void LoadFromXML( const tinyxml2::XMLElement& shaderProgramElement );
 	bool LoadFromStringLiterals( const char* vertexShaderText, const char* fragmentShaderText, const std::string& semiColonDelimitedDefines = "" );
 	bool LoadFromFiles( const char* root, const std::string& semiColonDelimitedDefines = "" ); // load a shader from file
 	unsigned int GetHandle() const;
@@ -31,6 +32,7 @@ private:
 private:
 	static GLuint LoadShaderFromText( const char* shaderText, GLenum type, const std::string& semiColonDelimitedDefines = "" );
 	static GLuint LoadShaderFromFile( const char* fileName, GLenum type, const std::string& semiColonDelimitedDefines = "" );
+	static std::string ExpandIncludesInShader( const char* filename, std::vector< std::string >& visitedFilenames );
 	static std::string InjectDefinesIntoShader( const char* shaderText, const std::string& semiColonDelimitedDefines );
 	static GLuint LinkShadersAndCreateProgram( GLint vertexShader, GLint fragmentShader );
 	static void LogCompileError( GLuint shaderID );

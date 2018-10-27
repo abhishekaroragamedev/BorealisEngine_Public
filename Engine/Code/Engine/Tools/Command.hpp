@@ -12,7 +12,7 @@ class Command
 {
 
 public:
-	Command( const char* str ); 
+	Command( const char* str, bool isRemote = false ); 
 	~Command();
 
 	std::string GetName() const; // would return "echo_with_color"
@@ -34,10 +34,13 @@ public:
 								   // bool GetNextVector3( Vector3 *out_val );
 								   // ... 
 
+	bool IsRemote() const;
+
 private:
 	std::string m_name = "";
 	TokenizedString m_argumentTokens;
 	int m_currentArgumentIndex = 0;
+	bool m_isRemote = false;
 };
 
 // Command callbacks take a Command.
@@ -54,14 +57,14 @@ void CommandShutdown();
 // 
 // We then, during some startup, call
 //    CommandRegister( "help", Help ); 
-void CommandRegister( const char* name, command_cb cb, const char* description = "" ); 
+void CommandRegister( const char* name, command_cb cb, const char* description = "", bool isRestricted = false ); 
 void CommandUnregister( const char* name );
 
 // Will construct a Command object locally, and if 
 // a callback is associated with its name, will call it and 
 // return true, otherwise returns false.
 // Name is case-insensitive
-bool CommandRun( const char* command ); 
+bool CommandRun( const char* command, bool isRemote = false ); 
 
 std::vector< std::string > GetCommandHistory(); 
 void ClearCommandHistory();

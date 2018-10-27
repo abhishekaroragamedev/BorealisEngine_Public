@@ -28,6 +28,8 @@ public:
 
 	std::vector< windows_message_handler_cb > GetMessageHandlers() const;
 
+
+
 private:
 	void* m_hwnd; // intptr_t  
 

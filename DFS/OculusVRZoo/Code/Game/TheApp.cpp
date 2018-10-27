@@ -209,6 +209,7 @@ void TheApp::LoadPreGameResources()
 void TheApp::RunFrame()
 {
 	ClockSystemBeginFrame();
+	g_audioSystem->BeginFrame();
 	g_inputSystem->BeginFrame();
 	g_renderer->BeginFrame( ( g_gameConfigBlackboard.GetValue( "screenHeight", 500.0f ) * g_gameConfigBlackboard.GetValue( "screenAspect", 500.0f ) ), g_gameConfigBlackboard.GetValue( "screenHeight", 500.0f ) );
 	if ( g_gameConfigBlackboard.GetValue( "vrEnabled", false ) )
@@ -231,6 +232,7 @@ void TheApp::RunFrame()
 		DevConsole::GetInstance()->Render( *g_renderer );
 	}
 
+	g_audioSystem->EndFrame();
 	g_inputSystem->EndFrame();
 	g_renderer->EndFrame();
 

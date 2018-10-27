@@ -17,6 +17,55 @@ public:
 
 };
 
+template< typename T >
+class ThreadSafePrimitive
+{
+
+public:
+	T Get()
+	{
+		T value;
+		m_lock.Enter();
+		value = m_data;
+		m_lock.Leave();
+		return value;
+	}
+
+	bool TryGet( T* out_item )
+	{
+		bool success = m_lock.TryEnter()
+		if ( success )
+		{
+			*out_item = m_data;
+			m_lock.Leave();
+		}
+		return success;
+	}
+
+	void Set( const T& value )
+	{
+		m_lock.Enter();
+		m_data = value;
+		m_lock.Leave();
+	}
+
+	bool TrySet( const T& value )
+	{
+		bool success = m_lock.TryEnter()
+		if ( success )
+		{
+			m_data = value;
+			m_lock.Leave();
+		}
+		return success;
+	}
+
+private:
+	T m_data;
+	SpinLock m_lock;
+
+};
+
 template< typename T>
 class ThreadSafeQueue
 {
@@ -208,7 +257,7 @@ public:
 		m_lock.Enter();
 		for ( size_t index = 0; index < m_data.size(); index++ )
 		{
-			if ( &m_data[ index ] = &item )
+			if ( m_data[ index ] == item )
 			{
 				m_data.erase( m_data.begin() + index );
 				success = true;

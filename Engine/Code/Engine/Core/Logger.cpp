@@ -10,9 +10,8 @@
 #include <algorithm>
 
 constexpr char LOG_DIRECTORY[] = "Log";
-constexpr char LOG_FILENAME[] = "Log/Log.txt";
-constexpr char LOG_TIMESTAMP_FILENAME_PREFIX[] = "Log/Log_";
-constexpr char LOG_TIMESTAMP_FILENAME_SUFFIX[] = ".txt";
+constexpr char LOG_FILENAME_PREFIX[] = "Log/Log_";
+constexpr char LOG_FILENAME_SUFFIX[] = ".txt";
 constexpr char LOG_FORMAT[] = "%s %s: %s";
 constexpr int LOG_MAX_HISTORY = 10;
 
@@ -65,7 +64,7 @@ public:
 
 	ThreadSafeQueue< Log > m_logs;
 	ThreadSafeVector< LogHook > m_logHooks;
-	
+
 	// If true, only tags in m_filters will be shown. If false, tags in m_filters will not be shown.
 	bool m_areFiltersWhitelist = false;
 	ThreadSafeSet< std::string > m_filters;
@@ -215,16 +214,21 @@ static void LogWriteToFileDefault( const Log& log, void* )
 {
 	if ( g_logFilePointer == nullptr )
 	{
-		CreateDirectoryIfNotExists( LOG_DIRECTORY );
-		CreateFileIfNotExists( LOG_FILENAME );
+		DWORD pid = ::GetProcessId( ::GetCurrentProcess() );
+		std::string logFilename = Stringf( "%s%lu%s", LOG_FILENAME_PREFIX, pid, LOG_FILENAME_SUFFIX );
 
-		g_logFilePointer = OpenFile( LOG_FILENAME, "w" );
+		CreateDirectoryIfNotExists( LOG_DIRECTORY );
+		CreateFileIfNotExists( logFilename.c_str() );
+
+		g_logFilePointer = OpenFile( logFilename.c_str(), "w" );
 	}
 	if ( g_logTimestampedFilePointer == nullptr )
 	{
 		std::string timeStamp = GetTimestampForFilename();
-		std::string fullFilename = std::string( LOG_TIMESTAMP_FILENAME_PREFIX ) + "_" + timeStamp + std::string( LOG_TIMESTAMP_FILENAME_SUFFIX );
-		g_logTimestampedFilePointer = OpenFile( fullFilename.c_str(), "w" );
+		DWORD pid = ::GetProcessId( ::GetCurrentProcess() );
+		std::string logFilename = Stringf( "%s%lu_%s%s", LOG_FILENAME_PREFIX, pid, timeStamp.c_str(), LOG_FILENAME_SUFFIX );
+		CreateFileIfNotExists( logFilename.c_str() );
+		g_logTimestampedFilePointer = OpenFile( logFilename.c_str(), "w" );
 
 		DeleteOldLogFiles();
 	}

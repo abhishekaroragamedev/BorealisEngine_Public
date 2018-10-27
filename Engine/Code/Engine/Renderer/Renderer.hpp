@@ -130,7 +130,7 @@ public:
 public:
 	BitmapFont* CreateOrGetBitmapFont( const char* bitmapFontName );
 	SpriteSheet* CreateOrGetTextureAtlasForBitmapFont( const std::string& spriteSheetFilePath );
-	Texture* CreateOrGetTexture( const std::string& textureFilePath, unsigned int mipLevels = 1U, bool loadAsync = false );
+	Texture* CreateOrGetTexture( const std::string& textureFilePath, unsigned int mipLevels = 1U, bool loadAsync = true );
 	Sprite* CreateOrReplaceSprite( const std::string& spriteName, Texture* texture, AABB2 UVs, float PPU, Vector2 pivot = Vector2::ZERO );
 	Sprite* CreateOrReplaceSprite( const std::string& spriteName, const std::string& textureFilePath, AABB2 UVs, float PPU, Vector2 pivot = Vector2::ZERO );
 	Sprite* CreateOrReplaceSprite( const std::string& spriteName, const tinyxml2::XMLElement& spriteElement );
@@ -181,7 +181,7 @@ public:
 	void DrawMeshWithMaterial( const Mesh* mesh, Material& material );
 	void DrawRenderable( Renderable& renderable, unsigned int passIndex = 0U );
 	void DrawMeshImmediate( const Vertex_3DPCU* verts, int numVerts, const unsigned int* indices, int numIndices, DrawPrimitiveType drawPrimitive ) const;
-	void DrawFullScreenImmediate( Material& material, unsigned int passIndex = 0U );
+	void DrawFullScreenImmediate( Material& material, const Rgba& color = Rgba::WHITE, unsigned int passIndex = 0U );
 	void DrawLine( const Vector2& startPoint, const Vector2& endPoint, const Rgba& startColor, const Rgba& endColor, const float lineThickness ) const;
 	void DrawLineBorder( const AABB2& bounds, const Rgba& color, const float lineThickness ) const;
 	void DrawPolygon( const Vector2& location, const float angle, const Vector2 vertices[], const int numSides, const RPolygonType polygonType, const Rgba& color ) const;
@@ -358,6 +358,8 @@ private:
 	Vector3 GetAnchorPointForAlignmentWithTextBox3D( const Vector3& boxMins, const Vector3& rightVector, const Vector2& boxDimensions, const Vector2& alignment ) const;
 	void LoadShadersFromFile();
 	void LoadMaterialsFromFile();
+	void ReloadShadersFromFile();
+	void ReloadMaterialsFromFile();
 	void DrawTextInBox2DOverrun( const std::vector< std::string >& linesOfText, const AABB2& boxBounds, float cellHeight, const Rgba& tint, float aspectScale, const BitmapFont* font, const Vector2& alignment ) const;
 	void DrawTextInBox2DShrinkToFit( const std::vector< std::string >& linesOfText, const AABB2& boxBounds, float cellHeight, const Rgba& tint, float aspectScale, const BitmapFont* font, const Vector2& alignment ) const;
 	void DrawTextInBox2DWordWrap( std::vector< std::string >& linesOfText, const AABB2& boxBounds, float cellHeight, const Rgba& tint, float aspectScale, const BitmapFont* font, const Vector2& alignment ) const;

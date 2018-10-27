@@ -10,9 +10,36 @@
 #include "Engine/Tools/Command.hpp"
 #include "Engine/Tools/DevConsole.hpp"
 #include "Engine/Tools/Profiler/ProfileScope.hpp"
+#include "Engine/Tools/RemoteCommandService.hpp"
 #include <stdarg.h>
 #include <stdio.h>
 #include <windows.h>
+
+struct ConsoleHook
+{
+
+public:
+	ConsoleHook()
+	{
+
+	}
+	ConsoleHook( devconsole_cb callback, void* userData )
+		:	m_callback( callback ),
+			m_userData( userData )
+	{
+
+	}
+
+	bool operator==( const ConsoleHook& compare )
+	{
+		return ( m_callback == compare.m_callback && m_userData == compare.m_userData );
+	}
+
+public:
+	devconsole_cb m_callback;
+	void* m_userData;
+
+};
 
 ColoredString::ColoredString( const std::string& str, const Rgba& color )
 	:	m_string( str ),
@@ -25,6 +52,8 @@ bool CaptureKeyboardInput( unsigned int msg, size_t wparam, size_t lparam );
 
 DevConsole* g_devConsole = nullptr;
 ThreadSafeQueue< ColoredString > g_consolePrintfQueue;
+ThreadSafeVector< ConsoleHook > g_devConsoleHooks;
+bool g_areDevConsoleHooksEnabled = true;
 
 void DevConsole::CreateInstance( Renderer* renderer )
 {
@@ -56,10 +85,11 @@ DevConsole::DevConsole( Renderer* renderer/*=nullptr*/ )
 
 	LogHookRegister( DevConsoleLog );
 	CommandRegister( "help", HelpCommand, "Displays registered command names and descriptions." );
-	CommandRegister( "clear", ClearCommand, "Clears the console output window." );
+	CommandRegister( "clear", ClearCommand, "Clears the console output window.", true );
 	CommandRegister( "save_log", SaveLogCommand, "Saves the current console output to file." );
 	CommandRegister( "echo_with_color", EchoWithColorCommand, "echo_with_color \"<message>\" \"<r,g,b,a>\" - prints a colored string." );
-	CommandRegister( "clear_history", ClearCommandHistoryCommand, "Clears the command history." );
+	CommandRegister( "clear_history", ClearCommandHistoryCommand, "Clears the command history.", true );
+	CommandRegister( "clone_process", CloneProcessCommand, "Spawns a duplicate process.", true );
 	CommandRegister( "log_test", LogTestCommand, "Prints the contents of the provided file to Log.txt." );
 	CommandRegister( "log_flush_test", LogFlushTestCommand, "Flushes the log file and hits a breakpoint to allow verification of the log file output." );
 	CommandRegister( "log_show_tag", LogShowTagCommand, "Enable logging for messages with a given tag." );
@@ -466,6 +496,11 @@ void DevConsole::AddLineToOutputText( const char* lineToAdd, const Rgba& color )
 
 void DevConsole::AddLineToOutputText( const std::string& lineToAdd, const Rgba& color )
 {
+	if ( m_outputTextLines.size() > OUTPUT_TEXT_MAX_LINES )
+	{
+		m_outputTextLines.erase( m_outputTextLines.begin() );
+	}
+
 	TokenizedString lines = TokenizedString( lineToAdd, "\n" );
 	for ( std::string line : lines.GetTokens() )
 	{
@@ -532,6 +567,7 @@ void DevConsole::Render( Renderer& renderer ) const
 		RenderTextInputBox( renderer );
 		RenderSelectedTextOverlay( renderer );
 		RenderOutput( renderer );
+		RenderRCSWidget( renderer );
 	}
 }
 
@@ -580,8 +616,8 @@ void DevConsole::RenderOutputText( const Renderer& renderer, const AABB2& output
 
 	AABB2 currentLineBounds = outputBounds;
 	currentLineBounds.maxs.y = currentLineBounds.mins.y + TYPED_TEXT_CELL_HEIGHT;
-	int numLinesToPrint = Max( static_cast< int >( m_lowestVisibleOutputLineIndex - m_maxVisibleOutputLines ), 0 );
-	for ( int lineIndex = static_cast< int >( m_lowestVisibleOutputLineIndex ); lineIndex >= numLinesToPrint; lineIndex-- )	// Iterate backwards so that the most recent line ends up on the bottom
+	int topLineIndex = Max( static_cast< int >( m_lowestVisibleOutputLineIndex - m_maxVisibleOutputLines ), 0 );
+	for ( int lineIndex = static_cast< int >( m_lowestVisibleOutputLineIndex ); lineIndex >= topLineIndex; lineIndex-- )	// Iterate backwards so that the most recent line ends up on the bottom
 	{
 		renderer.DrawTextInBox2D( m_outputTextLines[ lineIndex ].m_string, currentLineBounds, TYPED_TEXT_CELL_HEIGHT, m_outputTextLines[ lineIndex ].m_color, 1.0f, nullptr, TextDrawMode::TEXT_DRAW_OVERRUN, Vector2( 0.0f, 1.0f ) );
 		
@@ -609,9 +645,113 @@ void DevConsole::RenderOutputTextScrollbar( const Renderer& renderer, const AABB
 	renderer.DrawAABB( scrollbarBounds, Rgba::WHITE );
 }
 
+void DevConsole::RenderRCSWidget( const Renderer& renderer ) const
+{
+#if !defined( ENGINE_DISABLE_NETWORKING )
+
+	unsigned int maxNumClients = RemoteCommandService::GetInstance()->GetMaxNumClients();
+	unsigned int numClients = RemoteCommandService::GetInstance()->GetNumClients();
+
+	float widgetMinY = 0.85f - ( static_cast< float >( numClients ) * 0.025f );
+	AABB2 widgetBounds = AABB2( 
+		Vector2( 0.5f, widgetMinY )	* s_dimensionScaling,
+		Vector2( 0.95f, 0.95f )	* s_dimensionScaling
+	);
+	renderer.DrawAABB( widgetBounds, Rgba( 0, 50, 50, 120 ) );
+
+	AABB2 currentWidgetBounds = AABB2( widgetBounds );
+
+	std::string rcsStatusText = ( RemoteCommandService::GetInstance()->IsRunning() )? "RUNNING" : "STOPPED";
+	std::string rcsTitleText = Stringf( "Remote Command Service [%s]", rcsStatusText.c_str() );
+	Rgba rcsTitleTextColor = ( RemoteCommandService::GetInstance()->IsRunning() )? Rgba::GREEN : Rgba::RED;
+	renderer.DrawTextInBox2D(
+		rcsTitleText,
+		currentWidgetBounds,
+		0.03f,
+		rcsTitleTextColor,
+		0.75f,
+		nullptr,
+		TextDrawMode::TEXT_DRAW_WORD_WRAP,
+		Vector2( 0.5f, 0.0f )
+	);
+	currentWidgetBounds.maxs.y -= 0.05f;
+
+	std::string hostAddrIPv4 = RemoteCommandService::GetInstance()->GetAddressIPv4String();
+	RCSMode currentRCSMode = RemoteCommandService::GetInstance()->GetMode();
+	std::string rcsMode = "";
+	std::string addressTypeStr = "";
+	switch( currentRCSMode )
+	{
+		case RCSMode::RCS_MODE_INVALID:	rcsMode = "INVALID";	addressTypeStr = "join";	break;
+		case RCSMode::RCS_MODE_SERVER:	rcsMode = "HOST";	addressTypeStr = "join";	break;
+		case RCSMode::RCS_MODE_CLIENT:	rcsMode = "CLIENT";	addressTypeStr = "host";	break;
+	}
+	std::string hostAddrText = Stringf( "[%s] %s address: %s", rcsMode.c_str(), addressTypeStr.c_str(), hostAddrIPv4.c_str() );
+	renderer.DrawTextInBox2D(
+		hostAddrText,
+		currentWidgetBounds,
+		0.025f,
+		Rgba::WHITE,
+		0.75f,
+		nullptr,
+		TextDrawMode::TEXT_DRAW_WORD_WRAP,
+		Vector2( 0.0f, 0.0f )
+	);
+	currentWidgetBounds.maxs.y -= 0.025f;
+
+	std::string clientsText = Stringf( "Connected client(s): %u/%u", numClients, maxNumClients );
+	renderer.DrawTextInBox2D(
+		clientsText,
+		currentWidgetBounds,
+		0.025f,
+		Rgba::WHITE,
+		0.75f,
+		nullptr,
+		TextDrawMode::TEXT_DRAW_WORD_WRAP,
+		Vector2( 0.0f, 0.0f )
+	);
+	currentWidgetBounds.maxs.y -= 0.025f;
+
+	for ( unsigned int clientIndex = 0U; clientIndex < numClients; clientIndex++ )
+	{
+		std::string clientAddrIPv4 = RemoteCommandService::GetInstance()->GetClientAddressIPv4String( clientIndex );
+		std::string clientAddrText = Stringf( "[%u] %s", clientIndex, clientAddrIPv4.c_str() );
+		renderer.DrawTextInBox2D(
+			clientAddrText,
+			currentWidgetBounds,
+			0.025f,
+			Rgba::WHITE,
+			0.75f,
+			nullptr,
+			TextDrawMode::TEXT_DRAW_WORD_WRAP,
+			Vector2( 0.0f, 0.0f )
+		);
+		currentWidgetBounds.maxs.y -= 0.025f;
+	}
+
+#endif
+}
+
 bool IsDevConsoleOpen()
 {
 	return DevConsole::GetInstance()->IsOpen();
+}
+
+/* internal */
+void FireDevConsoleHooks( const std::string& logOutput )
+{
+	if ( g_areDevConsoleHooksEnabled )
+	{
+		for ( size_t hookIndex = 0; hookIndex < g_devConsoleHooks.Size(); hookIndex++ )
+		{
+			ConsoleHook hook;
+			bool success = g_devConsoleHooks.Get( hookIndex, &hook );
+			if ( success )
+			{
+				hook.m_callback( logOutput, hook.m_userData );
+			}
+		}
+	}
 }
 
 void ConsolePrintf( const Rgba& color, const char* format, ... )
@@ -623,6 +763,8 @@ void ConsolePrintf( const Rgba& color, const char* format, ... )
 
 	ColoredString coloredString = ColoredString( finalString, color );
 	g_consolePrintfQueue.Enqueue( coloredString );
+
+	FireDevConsoleHooks( coloredString.m_string );
 }
 
 void ConsolePrintf( char const *format, ... )
@@ -634,6 +776,8 @@ void ConsolePrintf( char const *format, ... )
 
 	ColoredString coloredString = ColoredString( finalString, Rgba::WHITE );
 	g_consolePrintfQueue.Enqueue( coloredString );
+
+	FireDevConsoleHooks( coloredString.m_string );
 }
 
 bool CaptureKeyboardInput( unsigned int msg, size_t wparam, size_t lparam )
@@ -724,6 +868,84 @@ bool ClearCommandHistoryCommand( Command& clearCommandHistoryCommand )
 	{
 		ClearCommandHistory();
 		return true;
+	}
+	return false;
+}
+
+bool CloneProcessCommand( Command& cloneProcessCommand )
+{
+	if ( cloneProcessCommand.GetName() == "clone_process" )
+	{
+		int cloneCount = 1;
+		std::string countStr = cloneProcessCommand.GetNextString();
+		if ( countStr != "" )
+		{
+			try
+			{
+				cloneCount = stoi( countStr );
+			}
+			catch ( std::invalid_argument& arg )
+			{
+				UNUSED( arg );
+				ConsolePrintf( Rgba::RED, "ERROR: clone_process: Invalid number provided for number of clones." );
+				return false;
+			}
+		}
+
+		if ( cloneCount < 1 )
+		{
+			ConsolePrintf( Rgba::RED, "ERROR: clone_process: Invalid number provided for number of clones : %d.", cloneCount );
+			return false;
+		}
+
+		LPSTR execFilename = new CHAR[ 1000 ];
+		::GetModuleFileNameA(
+			NULL,				// This ensures the call returns the filename of the executable
+			execFilename,
+			1000
+		);
+		STARTUPINFOA startupInfo;
+		ZeroMemory( &startupInfo, sizeof( startupInfo ) );
+		startupInfo.cb = sizeof( startupInfo );
+		PROCESS_INFORMATION processInfo;
+		ZeroMemory( &processInfo, sizeof( processInfo ) );
+
+
+		bool success = true;
+		while ( cloneCount > 0 )
+		{
+			success = success && CreateProcessA(
+				execFilename,
+				NULL,			// Since the filename is provided, no command line is needed
+				NULL,
+				NULL,
+				false,
+				0,
+				NULL,
+				NULL,
+				&startupInfo,
+				&processInfo
+			);
+
+			if ( !success )
+			{
+				ConsolePrintf( Rgba::RED, "ERROR: clone_process: CreateProcess failed : %d.", GetLastError() );
+				cloneCount = 0;
+			}
+			else
+			{
+				//WaitForSingleObject( processInfo.hProcess, 5000 );
+
+				//CloseHandle( processInfo.hProcess );
+				//CloseHandle( processInfo.hThread );
+			}
+
+			cloneCount--;
+		}
+
+		delete[] execFilename;
+
+		return success;
 	}
 	return false;
 }
@@ -869,7 +1091,29 @@ bool LogTimestampCommand( Command& logTimestampCommand )
 
 #pragma endregion
 
-#pragma region Log Callbacks
+#pragma region CallbackHooks
+
+void DevConsoleHook( devconsole_cb callback, void* userData )
+{
+	ConsoleHook hook = ConsoleHook( callback, userData );
+	g_devConsoleHooks.Push( hook );
+}
+
+void DevConsoleUnhook( devconsole_cb callback, void* userData )
+{
+	ConsoleHook hook = ConsoleHook( callback, userData );
+	g_devConsoleHooks.Erase( hook );
+}
+
+void DevConsoleHooksEnable()
+{
+	g_areDevConsoleHooksEnabled = true;
+}
+
+void DevConsoleHooksDisable()
+{
+	g_areDevConsoleHooksEnabled = false;
+}
 
 void DevConsoleLog( const Log& log, void* )
 {

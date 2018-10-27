@@ -192,6 +192,8 @@ public:
 	RenderQueue GetRenderQueue( unsigned int passIndex ) const;
 	int GetLayer( unsigned int passIndex ) const;
 
+	void LoadFromXML( const tinyxml2::XMLElement& materialElement, bool isReload = false );
+
 	void BindPropertyBlocks( unsigned int passIndex );
 
 	void AddProperty( MaterialProperty* property );
@@ -220,6 +222,7 @@ private:
 
 	int GetPropertyIndex( const std::string& name ) const; // Returns -1 if property not found
 
+	void DeleteAllMaterialData();
 	void DeleteAllProperties();
 	void DeleteExistingProperty( const std::string& name );
 

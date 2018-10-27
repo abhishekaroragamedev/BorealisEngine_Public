@@ -34,7 +34,9 @@
     <ClCompile Include="Audio\Audio3D.cpp" />
     <ClCompile Include="Audio\AudioSystem.cpp" />
     <ClCompile Include="Core\Blackboard.cpp" />
+    <ClCompile Include="Core\BytePacker.cpp" />
     <ClCompile Include="Core\Clock.cpp" />
+    <ClCompile Include="Core\Endianness.cpp" />
     <ClCompile Include="Core\EngineCommon.cpp" />
     <ClCompile Include="Core\ErrorWarningAssert.cpp" />
     <ClCompile Include="Core\Image.cpp" />
@@ -55,7 +57,6 @@
     <ClCompile Include="Input\XboxController.cpp" />
     <ClCompile Include="Math\AABB2.cpp" />
     <ClCompile Include="Math\AABB3.cpp" />
-    <ClCompile Include="Math\Contact.cpp" />
     <ClCompile Include="Math\CubicSpline.cpp" />
     <ClCompile Include="Math\Disc2.cpp" />
     <ClCompile Include="Math\FloatRange.cpp" />
@@ -71,6 +72,16 @@
     <ClCompile Include="Math\Vector2.cpp" />
     <ClCompile Include="Math\Vector3.cpp" />
     <ClCompile Include="Math\Vector4.cpp" />
+    <ClCompile Include="Networking\NetAddress.cpp" />
+    <ClCompile Include="Networking\NetConnection.cpp" />
+    <ClCompile Include="Networking\NetMessage.cpp" />
+    <ClCompile Include="Networking\NetPacket.cpp" />
+    <ClCompile Include="Networking\NetSession.cpp" />
+    <ClCompile Include="Networking\Networking.cpp" />
+    <ClCompile Include="Networking\Socket.cpp" />
+    <ClCompile Include="Networking\TCPSocket.cpp" />
+    <ClCompile Include="Networking\Test\UDPTest.cpp" />
+    <ClCompile Include="Networking\UDPSocket.cpp" />
     <ClCompile Include="OculusRift\OVRContext.cpp" />
     <ClCompile Include="OculusRift\OVRHeadset.cpp" />
     <ClCompile Include="OculusRift\OVRHelper.cpp" />
@@ -117,6 +128,7 @@
     <ClCompile Include="Tools\Profiler\ProfileScope.cpp" />
     <ClCompile Include="Tools\Profiler\Profiler.cpp" />
     <ClCompile Include="Tools\Profiler\ProfilerMeasurement.cpp" />
+    <ClCompile Include="Tools\RemoteCommandService.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\ThirdParty\fmod\fmod.h" />
@@ -145,7 +157,9 @@
     <ClInclude Include="Audio\Audio3D.hpp" />
     <ClInclude Include="Audio\AudioSystem.hpp" />
     <ClInclude Include="Core\Blackboard.hpp" />
+    <ClInclude Include="Core\BytePacker.hpp" />
     <ClInclude Include="Core\Clock.hpp" />
+    <ClInclude Include="Core\Endianness.hpp" />
     <ClInclude Include="Core\EngineCommon.hpp" />
     <ClInclude Include="Core\ErrorWarningAssert.hpp" />
     <ClInclude Include="Core\Image.hpp" />
@@ -182,6 +196,16 @@
     <ClInclude Include="Math\Vector2.hpp" />
     <ClInclude Include="Math\Vector3.hpp" />
     <ClInclude Include="Math\Vector4.hpp" />
+    <ClInclude Include="Networking\NetAddress.hpp" />
+    <ClInclude Include="Networking\NetConnection.hpp" />
+    <ClInclude Include="Networking\NetMessage.hpp" />
+    <ClInclude Include="Networking\NetPacket.hpp" />
+    <ClInclude Include="Networking\NetSession.hpp" />
+    <ClInclude Include="Networking\Networking.hpp" />
+    <ClInclude Include="Networking\Socket.hpp" />
+    <ClInclude Include="Networking\TCPSocket.hpp" />
+    <ClInclude Include="Networking\Test\UDPTest.hpp" />
+    <ClInclude Include="Networking\UDPSocket.hpp" />
     <ClInclude Include="OculusRift\OVRContext.hpp" />
     <ClInclude Include="OculusRift\OVRHeadset.hpp" />
     <ClInclude Include="OculusRift\OVRHelper.hpp" />
@@ -231,6 +255,7 @@
     <ClInclude Include="Tools\Profiler\ProfileScope.hpp" />
     <ClInclude Include="Tools\Profiler\Profiler.hpp" />
     <ClInclude Include="Tools\Profiler\ProfilerMeasurement.hpp" />
+    <ClInclude Include="Tools\RemoteCommandService.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

@@ -129,28 +129,13 @@ void OVRHeadset::InitializeAudio()
 	{
 		FMOD_RESULT result = fmodSystem->setDriver( currentDriver );
 		AudioSystem::GetInstance()->ValidateResult( result );
+
+		m_listenerID = AudioSystem::GetInstance()->GetNumListeners3D() - 1;
 	}
 	else
 	{
 		ERROR_RECOVERABLE("OVRHeadset: Could not find Oculus audio driver." );
 	}
-
-	// Initialize ear transforms
-	m_ears[ 0 ].m_transform.Reparent( &m_transform );
-	Vector3 leftEarPosition = Vector3( -0.06f, 0.0f, -0.05f );	// Distances in meters
-	Vector3 leftEarRight = Vector3::FORWARD;
-	Vector3 leftEarUp = Vector3::UP;
-	Vector3 leftEarForward = Vector3::RIGHT * -1.0f;
-	Matrix44 leftEarMatrix = Matrix44( leftEarRight, leftEarUp, leftEarForward, leftEarPosition );
-	m_ears[ 0 ].m_transform.SetLocalFromMatrix( leftEarMatrix );
-
-	m_ears[ 1 ].m_transform.Reparent( &m_transform );
-	Vector3 rightEarPosition = Vector3( 0.06f, 0.0f, -0.05f );	// Distances in meters
-	Vector3 rightEarRight = Vector3::FORWARD * -1.0f;
-	Vector3 rightEarUp = Vector3::UP;
-	Vector3 rightEarForward = Vector3::RIGHT;
-	Matrix44 rightEarMatrix = Matrix44( rightEarRight, rightEarUp, rightEarForward, rightEarPosition );
-	m_ears[ 1 ].m_transform.SetLocalFromMatrix( rightEarMatrix );
 }
 
 void OVRHeadset::InitializeRenderPipeline()
@@ -366,7 +351,7 @@ void OVRHeadset::BeginFrame()
 	BeginRender();
 
 	UpdateTransform();
-	UpdateAudioSources();
+	UpdateAudio();
 	UpdateEyePosesInLayer();
 }
 
@@ -398,11 +383,25 @@ void OVRHeadset::UpdateTransform()
 	}
 }
 
-void OVRHeadset::UpdateAudioSources()
+void OVRHeadset::UpdateAudio()
 {
-	for ( int audioSourceIndex = 0; audioSourceIndex < m_numAudioSources; audioSourceIndex++ )
+	for ( size_t index = 0U; index < m_numSoundPlaybackIDs; index++ )
 	{
-		m_audioSources[ audioSourceIndex ]->UpdateCurrentSoundForListeners( m_ears[ 0 ], m_ears[ 1 ], m_masterVolume );
+		AudioSystem::GetInstance()->SetSoundPlaybackVolume( m_soundPlaybackIDs[ index ], m_masterVolume );
+	}
+
+	Matrix44 headsetMatrix = m_transform.GetAsMatrixWorld();
+	float eyeToEarSpacing = ( g_gameConfigBlackboard.GetValue( "vrEyeToEarSpacingmm", 60.0f ) * 0.001f );
+
+	if ( m_listenerID != -1 )
+	{
+		AudioSystem::GetInstance()->SetListener3DAttributes(
+			( headsetMatrix.GetTranslation() - ( eyeToEarSpacing * headsetMatrix.GetKBasis() ) ),
+			Vector3::ZERO,
+			headsetMatrix.GetJBasis(),
+			headsetMatrix.GetKBasis(),
+			m_listenerID
+		);
 	}
 }
 
@@ -549,23 +548,39 @@ void OVRHeadset::SetBloomEnabled( bool bloomEnabled )
 	m_rightEyeCamera->SetBloomEnabled( bloomEnabled );
 }
 
-void OVRHeadset::AddAudioSource( AudioSource3D* source )
+void OVRHeadset::AddSound( size_t soundPlaybackID )
 {
-	m_audioSources[ m_numAudioSources ] = source;
-	m_numAudioSources++;
+	if ( m_numSoundPlaybackIDs < OVR_AUDIO_MAX_SOUNDS )
+	{
+		m_soundPlaybackIDs[ m_numSoundPlaybackIDs ] = soundPlaybackID;
+		m_numSoundPlaybackIDs++;
+	}
+	else
+	{
+		ConsolePrintf( Rgba::RED, "OVRHeadset::AddSound(): Cannot add more sounds." );
+	}
 }
 
-bool OVRHeadset::RemoveAudioSource( AudioSource3D* source )
+bool OVRHeadset::RemoveSound( size_t soundPlaybackID )
 {
-	for ( int sourceIndex = 0; sourceIndex < m_numAudioSources; sourceIndex++ )
+	if ( m_numSoundPlaybackIDs == 0U )
 	{
-		if ( m_audioSources[ sourceIndex ] == source )
+		ConsolePrintf( Rgba::RED, "ERROR: OVRHeadset::RemoveSound(): No sounds registered." );
+		return false;
+	}
+
+	for ( size_t index = 0U; index < m_numSoundPlaybackIDs; index++ )
+	{
+		if ( m_soundPlaybackIDs[ index ] == soundPlaybackID )
 		{
-			m_audioSources[ sourceIndex ] = m_audioSources[ m_numAudioSources - 1 ];
-			m_numAudioSources--;
+			m_soundPlaybackIDs[ index ] = m_soundPlaybackIDs[ m_numSoundPlaybackIDs - 1U ];
+			m_soundPlaybackIDs[ m_numSoundPlaybackIDs - 1U ] = 0U;
+			m_numSoundPlaybackIDs--;
 			return true;
 		}
 	}
+
+	ConsolePrintf( Rgba::RED, "ERROR: OVRHeadset::RemoveSound(): Could not find sound with the specified playback ID." );
 	return false;
 }
 
@@ -606,9 +621,9 @@ unsigned int OVRHeadset::GetMSAANumSamples() const
 	return m_leftEyeCamera->GetNumMSAASamples();
 }
 
-int OVRHeadset::GetNumAudioSources() const
+size_t OVRHeadset::GetNumRegisteredSounds() const
 {
-	return m_numAudioSources;
+	return m_numSoundPlaybackIDs;
 }
 
 float OVRHeadset::GetMasterVolume() const

@@ -31,6 +31,7 @@
 	vrEnabled="true"
 	vrHUDEnabled="true"
 	vrEyeSpacingmm="60.0"
+  vrEyeToEarSpacingmm="60.0"
 	vrCameraFOVDegrees="60.0"
 	vrCameraFarZ="1000.0"
 	vrCameraHeightm="1.8288"

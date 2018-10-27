@@ -15,6 +15,16 @@ ShaderPass::ShaderPass( ShaderProgram* shaderProgram )
 
 ShaderPass::ShaderPass( const tinyxml2::XMLElement& shaderPassElement )
 {
+	LoadFromXML( shaderPassElement );
+}
+
+ShaderPass::~ShaderPass()
+{
+
+}
+
+void ShaderPass::LoadFromXML( const tinyxml2::XMLElement& shaderPassElement )
+{
 	m_usesLights = ParseXmlAttribute( shaderPassElement, "usesLights", m_usesLights );
 	m_renderQueue = static_cast< RenderQueue >( ParseXmlAttribute( shaderPassElement, "queue", m_renderQueue ) );
 	m_layer = ParseXmlAttribute( shaderPassElement, "layer", m_layer );
@@ -27,7 +37,14 @@ ShaderPass::ShaderPass( const tinyxml2::XMLElement& shaderPassElement )
 	{
 		if ( std::string( childElement->Name() ) == "Program" )
 		{
-			m_program = new ShaderProgram( *childElement );
+			if ( m_program == nullptr )
+			{
+				m_program = new ShaderProgram( *childElement );
+			}
+			else
+			{
+				m_program->LoadFromXML( *childElement );
+			}
 		}
 		else if ( std::string( childElement->Name() ) == "Blend" )
 		{
@@ -57,11 +74,6 @@ ShaderPass::ShaderPass( const tinyxml2::XMLElement& shaderPassElement )
 			PopulateDefaultPropertiesFromXML( *childElement );
 		}
 	}
-}
-
-ShaderPass::~ShaderPass()
-{
-
 }
 
 void ShaderPass::PopulateDefaultPropertiesFromXML( const tinyxml2::XMLElement& materialPropertiesElement )
