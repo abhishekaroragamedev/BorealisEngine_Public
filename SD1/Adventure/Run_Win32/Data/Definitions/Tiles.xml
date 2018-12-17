@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TileDefinitions>
+
+  <TileDefinition
+    name="Grass"
+		baseSpriteCoords="4,0"
+		baseSpriteTint="255,255,255"
+    overlaySpriteCoords="8,1"
+		overlaySpriteTint="255,255,255,100"
+    mapTexelColor="0,255,0"
+		allowsSight="true"
+		allowsWalking="true"
+		allowsFlying="true"
+		allowsSwimming="false"
+    frictionMultiplier = "5.0"
+	/>
+
+  <TileDefinition
+    name="Sand"
+		baseSpriteCoords="14,3"
+		baseSpriteTint="255,255,255"
+    overlaySpriteCoords="13,3"
+		overlaySpriteTint="255,255,255,100"
+    mapTexelColor="0,255,0"
+		allowsSight="true"
+		allowsWalking="true"
+		allowsFlying="true"
+		allowsSwimming="false"
+    frictionMultiplier = "15.0"
+	/>
+
+  <TileDefinition
+    name="Snow"
+		baseSpriteCoords="9,10"
+		baseSpriteTint="255,255,255"
+    overlaySpriteCoords="1,3"
+		overlaySpriteTint="100,100,255,100"
+    mapTexelColor="0,255,0"
+		allowsSight="true"
+		allowsWalking="true"
+		allowsFlying="true"
+		allowsSwimming="false"
+    frictionMultiplier = "20.0"
+	/>
+
+  <TileDefinition
+    name="Ice"
+		baseSpriteCoords="9,11"
+		baseSpriteTint="255,255,255"
+    overlaySpriteCoords="10,11"
+		overlaySpriteTint="255,255,255,100"
+    mapTexelColor="0,255,0"
+		allowsSight="true"
+		allowsWalking="true"
+		allowsFlying="true"
+		allowsSwimming="false"
+    frictionMultiplier = "0.5"
+	/>
+
+  <TileDefinition
+    name="IceWall"
+		baseSpriteCoords="12,11"
+		baseSpriteTint="255,255,255"
+    overlaySpriteCoords="10,11"
+		overlaySpriteTint="255,255,255,50"
+    mapTexelColor="0,255,0"
+		allowsSight="false"
+		allowsWalking="false"
+		allowsFlying="false"
+		allowsSwimming="false"
+    frictionMultiplier = "100.0"
+	/>
+
+  <TileDefinition
+    name="Water"
+		baseSpriteCoords="0,18"
+		baseSpriteTint="255,255,255"
+    mapTexelColor="0,0,255"
+		allowsSight="true"
+		allowsWalking="false"
+		allowsFlying="true"
+		allowsSwimming="true"
+    frictionMultiplier = "1.1"
+	/>
+
+  <TileDefinition
+    name="Lava"
+		baseSpriteCoords="23,3"
+		baseSpriteTint="255,255,255"
+    mapTexelColor="255,0,0"
+		allowsSight="true"
+		allowsWalking="false"
+		allowsFlying="true"
+		allowsSwimming="true"
+    frictionMultiplier = "11.0"
+	/>
+
+  <TileDefinition
+    name="GrassyWall"
+		baseSpriteCoords="7,6"
+		baseSpriteTint="255,255,255"
+    mapTexelColor="100,255,100"
+		allowsSight="false"
+		allowsWalking="false"
+		allowsFlying="false"
+		allowsSwimming="false"
+	/>
+
+  <TileDefinition
+    name="StoneWall"
+		baseSpriteCoords="0,5"
+		baseSpriteTint="255,255,255"
+    mapTexelColor="100,100,100"
+		allowsSight="false"
+		allowsWalking="false"
+		allowsFlying="false"
+		allowsSwimming="false"
+	/>
+
+  <TileDefinition
+    name="WoodWall"
+		baseSpriteCoords="1,29"
+		baseSpriteTint="255,255,255"
+    mapTexelColor="100,100,100"
+		allowsSight="false"
+		allowsWalking="false"
+		allowsFlying="false"
+		allowsSwimming="false"
+	/>
+
+  <TileDefinition
+    name="Altar"
+		baseSpriteCoords="9,9"
+		baseSpriteTint="255,255,255"
+    mapTexelColor="255,255,255"
+		allowsSight="true"
+		allowsWalking="true"
+		allowsFlying="true"
+		allowsSwimming="false"
+    frictionMultiplier = "60.0"
+	/>
+
+  <TileDefinition
+    name="StoneFloor"
+		baseSpriteCoords="1,4"
+		baseSpriteTint="100,100,100"
+    mapTexelColor="50,50,50"
+		allowsSight="true"
+		allowsWalking="true"
+		allowsFlying="true"
+		allowsSwimming="false"
+    frictionMultiplier = "30.0"
+	/>
+  
+</TileDefinitions>

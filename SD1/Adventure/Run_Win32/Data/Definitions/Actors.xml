@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ActorDefinitions>
+
+	<ActorDefinition name="Player" faction="good" tags="biped">
+		<Physics physicsRadius="0.25" localDrawBounds="-0.6,-0.3,0.6,0.9" physicsMass="2.0" friction="1.0" />
+		<Movement>
+			<Walk />
+		</Movement>
+		<MinStats health="100" strength="1" resilience="1" agility="2" dexterity="4" aim="1" accuracy="1" evasiveness="1" poison="0" fire="0" ice="0" electricity="0" />
+    <MaxStats health="100" strength="1" resilience="1" agility="2" dexterity="4" aim="1" accuracy="1" evasiveness="1" poison="1" fire="0" ice="1" electricity="1" />
+		<SpriteAnimSet spriteSheet="MainCharacter_13x21.png" spriteLayout="13,21" fps="10">
+      <SpriteAnim name="Idle"		spriteIndices="130,131,132,133,134,135,136,137,138,137,136,135,134,133,132,131" fps="5" playbackMode="1" />
+      <SpriteAnim name="MoveEast"		spriteIndices="143,144,145,146,147,148,149,150,151" playbackMode="1" />
+      <SpriteAnim name="MoveWest"		spriteIndices="117,118,119,120,121,122,123,124,125" playbackMode="1" />
+      <SpriteAnim name="MoveNorth"	spriteIndices="104,105,106,107,108,109,110,111,112,111,110,109,108,107,106,105" playbackMode="1" />
+      <SpriteAnim name="MoveSouth"	spriteIndices="130,131,132,133,134,135,136,137,138,137,136,135,134,133,132,131" playbackMode="1" />
+      <SpriteAnim name="CastEast"	spriteIndices="39,40,41,42,43,44,45" playbackMode="0" />
+      <SpriteAnim name="CastWest"	spriteIndices="13,14,15,16,17,18,19" playbackMode="0" />
+      <SpriteAnim name="CastNorth"	spriteIndices="0,1,2,3,4,5,6,7" playbackMode="0" />
+      <SpriteAnim name="CastSouth"	spriteIndices="26,27,28,29,30,31,32" playbackMode="0" />
+      <SpriteAnim name="MeleeEast"	spriteIndices="195,196,197,198,199,200,199,198,197,196,195" playbackMode="0" />
+      <SpriteAnim name="MeleeWest"	spriteIndices="169,170,171,172,173,174,173,172,171,170,169" playbackMode="0" />
+      <SpriteAnim name="MeleeNorth"	spriteIndices="156,157,158,159,160,161,160,159,158,157,156" playbackMode="0" />
+      <SpriteAnim name="MeleeSouth"	spriteIndices="182,183,184,185,186,187,186,185,184,183,182" playbackMode="0" />
+      <SpriteAnim name="ShootEast"	spriteIndices="247,248,249,250,251,252,253,254,255,256,257,258,259,249,248,247" playbackMode="0" />
+      <SpriteAnim name="ShootWest"	spriteIndices="221,222,223,224,225,226,227,228,229,230,231,232,233,223,222,221" playbackMode="0" />
+      <SpriteAnim name="ShootNorth"	spriteIndices="208,209,210,211,212,213,214,215,216,217,218,219,220,210,209,208" playbackMode="0" />
+      <SpriteAnim name="ShootSouth"	spriteIndices="234,235,236,237,238,239,240,241,242,243,244,245,246,236,235,234" playbackMode="0" />
+		</SpriteAnimSet>
+	</ActorDefinition>
+
+  <ActorDefinition name="Skeleton" faction="evil" tags="biped" >
+    <Physics physicsRadius="0.25" localDrawBounds="-0.6,-0.3,0.6,0.9" physicsMass="1.0" />
+    <DefaultItems>
+      <Item name="Bow" chance="0.5" />
+      <Item name="Dagger" chance="0.5" />
+      <Item name="Fire Tome" chance="0.3" />
+      <Item name="Lightning Tome" chance="0.2" />
+      <Item name="Scout Helmet" chance="0.1" />
+    </DefaultItems>
+    <Dialogue>
+      <Death text="You defeated Skeleton!" bounds="0.0,0.0,1.0,0.4" style="Progressive" />
+    </Dialogue>
+    <LootToDrop>
+      <Loot type="Healing" chance="0.2" />
+      <Loot type="Uncommon" chance="0.15" />
+    </LootToDrop>
+    <Movement>
+      <Walk />
+    </Movement>
+    <MinStats health="15" strength="1" resilience="2" agility="1" dexterity="1" evasiveness="1" />
+    <MaxStats health="20" strength="2" resilience="3" agility="1" dexterity="1" evasiveness="2" />
+    <SpriteAnimSet spriteSheet="Skeleton_13x21.png" spriteLayout="13,21" fps="10">
+      <SpriteAnim name="Idle"		spriteIndices="130,131,132,133,134,135,136,137,138,137,136,135,134,133,132,131" fps="5" playbackMode="1" />
+      <SpriteAnim name="MoveEast"		spriteIndices="143,144,145,146,147,148,149,150,151" playbackMode="1" />
+      <SpriteAnim name="MoveWest"		spriteIndices="117,118,119,120,121,122,123,124,125" playbackMode="1" />
+      <SpriteAnim name="MoveNorth"	spriteIndices="104,105,106,107,108,109,110,111,112,111,110,109,108,107,106,105" playbackMode="1" />
+      <SpriteAnim name="MoveSouth"	spriteIndices="130,131,132,133,134,135,136,137,138,137,136,135,134,133,132,131" playbackMode="1" />
+      <SpriteAnim name="CastEast"	spriteIndices="39,40,41,42,43,44,45" playbackMode="0" />
+      <SpriteAnim name="CastWest"	spriteIndices="13,14,15,16,17,18,19" playbackMode="0" />
+      <SpriteAnim name="CastNorth"	spriteIndices="0,1,2,3,4,5,6,7" playbackMode="0" />
+      <SpriteAnim name="CastSouth"	spriteIndices="26,27,28,29,30,31,32" playbackMode="0" />
+      <SpriteAnim name="MeleeEast"	spriteIndices="195,196,197,198,199,200,199,198,197,196,195" playbackMode="0" />
+      <SpriteAnim name="MeleeWest"	spriteIndices="169,170,171,172,173,174,173,172,171,170,169" playbackMode="0" />
+      <SpriteAnim name="MeleeNorth"	spriteIndices="156,157,158,159,160,161,160,159,158,157,156" playbackMode="0" />
+      <SpriteAnim name="MeleeSouth"	spriteIndices="182,183,184,185,186,187,186,185,184,183,182" playbackMode="0" />
+      <SpriteAnim name="ShootEast"	spriteIndices="247,248,249,250,251,252,253,254,255,256,257,258,259,249,248,247" playbackMode="0" />
+      <SpriteAnim name="ShootWest"	spriteIndices="221,222,223,224,225,226,227,228,229,230,231,232,233,223,222,221" playbackMode="0" />
+      <SpriteAnim name="ShootNorth"	spriteIndices="208,209,210,211,212,213,214,215,216,217,218,219,220,210,209,208" playbackMode="0" />
+      <SpriteAnim name="ShootSouth"	spriteIndices="234,235,236,237,238,239,240,241,242,243,244,245,246,236,235,234" playbackMode="0" />
+    </SpriteAnimSet>
+  </ActorDefinition>
+
+  <ActorDefinition name="Dark Elf" faction="evil" tags="biped" >
+    <Physics physicsRadius="0.25" localDrawBounds="-0.6,-0.3,0.6,0.9" physicsMass="0.2" />
+    <DefaultItems>
+      <Item name="Bow" chance="0.5" />
+      <Item name="Dagger" chance="0.5" />
+      <Item name="Ice Tome" chance="0.8" />
+      <Item name="Fire Tome" chance="0.3" />
+      <Item name="Iron Armor" />
+      <Item name="Iron Helmet" chance="0.3" />
+      <Item name="Scout Helmet" chance="0.2" />
+    </DefaultItems>
+    <Dialogue>
+      <Death text="You defeated Dark Elf!" bounds="0.0,0.0,1.0,0.4" style="Progressive" />
+    </Dialogue>
+    <LootToDrop>
+      <Loot type="Healing" chance="0.2" />
+      <Loot type="Uncommon" chance="0.15" />
+      <Loot type="Rare" chance="0.3" />
+    </LootToDrop>
+    <Movement>
+      <Walk />
+      <Swim />
+    </Movement>
+    <MinStats health="15" strength="1" resilience="1" agility="1" dexterity="1" evasiveness="1" ice="1" fire="1" />
+    <MaxStats health="20" strength="1" resilience="1" agility="3" dexterity="3" evasiveness="1" ice="2" fire="2" />
+    <SpriteAnimSet spriteSheet="DarkElf_13x21.png" spriteLayout="13,21" fps="10">
+      <SpriteAnim name="Idle"		spriteIndices="130,131,132,133,134,135,136,137,138,137,136,135,134,133,132,131" fps="5" playbackMode="1" />
+      <SpriteAnim name="MoveEast"		spriteIndices="143,144,145,146,147,148,149,150,151" playbackMode="1" />
+      <SpriteAnim name="MoveWest"		spriteIndices="117,118,119,120,121,122,123,124,125" playbackMode="1" />
+      <SpriteAnim name="MoveNorth"	spriteIndices="104,105,106,107,108,109,110,111,112,111,110,109,108,107,106,105" playbackMode="1" />
+      <SpriteAnim name="MoveSouth"	spriteIndices="130,131,132,133,134,135,136,137,138,137,136,135,134,133,132,131" playbackMode="1" />
+      <SpriteAnim name="CastEast"	spriteIndices="39,40,41,42,43,44,45" playbackMode="0" />
+      <SpriteAnim name="CastWest"	spriteIndices="13,14,15,16,17,18,19" playbackMode="0" />
+      <SpriteAnim name="CastNorth"	spriteIndices="0,1,2,3,4,5,6,7" playbackMode="0" />
+      <SpriteAnim name="CastSouth"	spriteIndices="26,27,28,29,30,31,32" playbackMode="0" />
+      <SpriteAnim name="MeleeEast"	spriteIndices="195,196,197,198,199,200,199,198,197,196,195" playbackMode="0" />
+      <SpriteAnim name="MeleeWest"	spriteIndices="169,170,171,172,173,174,173,172,171,170,169" playbackMode="0" />
+      <SpriteAnim name="MeleeNorth"	spriteIndices="156,157,158,159,160,161,160,159,158,157,156" playbackMode="0" />
+      <SpriteAnim name="MeleeSouth"	spriteIndices="182,183,184,185,186,187,186,185,184,183,182" playbackMode="0" />
+      <SpriteAnim name="ShootEast"	spriteIndices="247,248,249,250,251,252,253,254,255,256,257,258,259,249,248,247" playbackMode="0" />
+      <SpriteAnim name="ShootWest"	spriteIndices="221,222,223,224,225,226,227,228,229,230,231,232,233,223,222,221" playbackMode="0" />
+      <SpriteAnim name="ShootNorth"	spriteIndices="208,209,210,211,212,213,214,215,216,217,218,219,220,210,209,208" playbackMode="0" />
+      <SpriteAnim name="ShootSouth"	spriteIndices="234,235,236,237,238,239,240,241,242,243,244,245,246,236,235,234" playbackMode="0" />
+    </SpriteAnimSet>
+  </ActorDefinition>
+
+  <ActorDefinition name="Mercenary" faction="evil" tags="biped" >
+    <Physics physicsRadius="0.25" localDrawBounds="-0.6,-0.3,0.6,0.9" physicsMass="0.5" />
+    <DefaultItems>
+      <Item name="Dagger" chance="0.5" />
+      <Item name="Poison Tome" chance="0.2" />
+      <Item name="Iron Armor" />
+      <Item name="Iron Helmet" chance="0.3" />
+      <Item name="Scout Helmet" chance="0.2" />
+    </DefaultItems>
+    <Dialogue>
+      <Death text="You defeated Mercenary!" bounds="0.0,0.0,1.0,0.4" style="Progressive" />
+    </Dialogue>
+    <LootToDrop>
+      <Loot type="Healing" chance="0.2" />
+      <Loot type="Uncommon" chance="0.15" />
+      <Loot type="Rare" chance="0.2" />
+    </LootToDrop>
+    <Movement>
+      <Walk />
+    </Movement>
+    <MinStats health="15" strength="1" resilience="2" agility="1" dexterity="1" evasiveness="1" poison="1" />
+    <MaxStats health="20" strength="4" resilience="3" agility="2" dexterity="2" evasiveness="2" poison="2" />
+    <SpriteAnimSet spriteSheet="Mercenary_13x21.png" spriteLayout="13,21" fps="10">
+      <SpriteAnim name="Idle"		spriteIndices="130,131,132,133,134,135,136,137,138,137,136,135,134,133,132,131" fps="5" playbackMode="1" />
+      <SpriteAnim name="MoveEast"		spriteIndices="143,144,145,146,147,148,149,150,151" playbackMode="1" />
+      <SpriteAnim name="MoveWest"		spriteIndices="117,118,119,120,121,122,123,124,125" playbackMode="1" />
+      <SpriteAnim name="MoveNorth"	spriteIndices="104,105,106,107,108,109,110,111,112,111,110,109,108,107,106,105" playbackMode="1" />
+      <SpriteAnim name="MoveSouth"	spriteIndices="130,131,132,133,134,135,136,137,138,137,136,135,134,133,132,131" playbackMode="1" />
+      <SpriteAnim name="CastEast"	spriteIndices="39,40,41,42,43,44,45" playbackMode="0" />
+      <SpriteAnim name="CastWest"	spriteIndices="13,14,15,16,17,18,19" playbackMode="0" />
+      <SpriteAnim name="CastNorth"	spriteIndices="0,1,2,3,4,5,6,7" playbackMode="0" />
+      <SpriteAnim name="CastSouth"	spriteIndices="26,27,28,29,30,31,32" playbackMode="0" />
+      <SpriteAnim name="MeleeEast"	spriteIndices="195,196,197,198,199,200,199,198,197,196,195" playbackMode="0" />
+      <SpriteAnim name="MeleeWest"	spriteIndices="169,170,171,172,173,174,173,172,171,170,169" playbackMode="0" />
+      <SpriteAnim name="MeleeNorth"	spriteIndices="156,157,158,159,160,161,160,159,158,157,156" playbackMode="0" />
+      <SpriteAnim name="MeleeSouth"	spriteIndices="182,183,184,185,186,187,186,185,184,183,182" playbackMode="0" />
+      <SpriteAnim name="ShootEast"	spriteIndices="247,248,249,250,251,252,253,254,255,256,257,258,259,249,248,247" playbackMode="0" />
+      <SpriteAnim name="ShootWest"	spriteIndices="221,222,223,224,225,226,227,228,229,230,231,232,233,223,222,221" playbackMode="0" />
+      <SpriteAnim name="ShootNorth"	spriteIndices="208,209,210,211,212,213,214,215,216,217,218,219,220,210,209,208" playbackMode="0" />
+      <SpriteAnim name="ShootSouth"	spriteIndices="234,235,236,237,238,239,240,241,242,243,244,245,246,236,235,234" playbackMode="0" />
+    </SpriteAnimSet>
+  </ActorDefinition>
+
+  <ActorDefinition name="Orc" faction="evil" tags="biped">
+    <Physics physicsRadius="0.25" localDrawBounds="-0.6,-0.3,0.6,0.9"  physicsMass="4.0" friction="0.7" />
+    <DefaultItems>
+      <Item name="Bow" chance="0.6" />
+      <Item name="Dagger" chance="0.8" />
+      <Item name="Lightning Tome" chance="0.5" />
+      <Item name="Fire Tome" />
+    </DefaultItems>
+		<Movement>
+			<Walk />
+      <Swim />
+		</Movement>
+    <Dialogue>
+      <Proximity text="Orc: Time to die!" bounds="0.0,0.0,1.0,0.4" units="3.0" style="Progressive" />
+      <Death text="You defeated Orc!" bounds="0.0,0.0,1.0,0.4" />
+    </Dialogue>
+    <MinStats health="125" strength="5" resilience="4" agility="2" dexterity="2" aim="3" accuracy="3" evasiveness="2" poison="1" fire="1" ice="2" electricity="2" />
+    <MaxStats health="125" strength="5" resilience="4" agility="2" dexterity="2" aim="3" accuracy="3" evasiveness="2" poison="1" fire="1" ice="2" electricity="2" />
+    <SpriteAnimSet spriteSheet="Orc_13x21.png" spriteLayout="13,21" fps="10">
+      <SpriteAnim name="Idle"		spriteIndices="130,131,132,133,134,135,136,137,138,137,136,135,134,133,132,131" fps="5" playbackMode="1" />
+      <SpriteAnim name="MoveEast"		spriteIndices="143,144,145,146,147,148,149,150,151" playbackMode="1" />
+      <SpriteAnim name="MoveWest"		spriteIndices="117,118,119,120,121,122,123,124,125" playbackMode="1" />
+      <SpriteAnim name="MoveNorth"	spriteIndices="104,105,106,107,108,109,110,111,112,111,110,109,108,107,106,105" playbackMode="1" />
+      <SpriteAnim name="MoveSouth"	spriteIndices="130,131,132,133,134,135,136,137,138,137,136,135,134,133,132,131" playbackMode="1" />
+      <SpriteAnim name="CastEast"	spriteIndices="39,40,41,42,43,44,45" playbackMode="0" />
+      <SpriteAnim name="CastWest"	spriteIndices="13,14,15,16,17,18,19" playbackMode="0" />
+      <SpriteAnim name="CastNorth"	spriteIndices="0,1,2,3,4,5,6,7" playbackMode="0" />
+      <SpriteAnim name="CastSouth"	spriteIndices="26,27,28,29,30,31,32" playbackMode="0" />
+      <SpriteAnim name="MeleeEast"	spriteIndices="195,196,197,198,199,200,199,198,197,196,195" playbackMode="0" />
+      <SpriteAnim name="MeleeWest"	spriteIndices="169,170,171,172,173,174,173,172,171,170,169" playbackMode="0" />
+      <SpriteAnim name="MeleeNorth"	spriteIndices="156,157,158,159,160,161,160,159,158,157,156" playbackMode="0" />
+      <SpriteAnim name="MeleeSouth"	spriteIndices="182,183,184,185,186,187,186,185,184,183,182" playbackMode="0" />
+      <SpriteAnim name="ShootEast"	spriteIndices="247,248,249,250,251,252,253,254,255,256,257,258,259,249,248,247" playbackMode="0" />
+      <SpriteAnim name="ShootWest"	spriteIndices="221,222,223,224,225,226,227,228,229,230,231,232,233,223,222,221" playbackMode="0" />
+      <SpriteAnim name="ShootNorth"	spriteIndices="208,209,210,211,212,213,214,215,216,217,218,219,220,210,209,208" playbackMode="0" />
+      <SpriteAnim name="ShootSouth"	spriteIndices="234,235,236,237,238,239,240,241,242,243,244,245,246,236,235,234" playbackMode="0" />
+		</SpriteAnimSet>
+	</ActorDefinition>
+
+</ActorDefinitions>

@@ -1,0 +1,225 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="General">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="DataFiles">
+      <UniqueIdentifier>{e5ac01e5-ffb8-4231-9105-79b2fd8d4d35}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="World">
+      <UniqueIdentifier>{3890df4d-e89e-4489-8603-be196f066e08}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DataFiles\Definitions">
+      <UniqueIdentifier>{1650ea66-9037-4bee-bab5-2c2ba3edf817}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Entities">
+      <UniqueIdentifier>{1c4fd60e-0cb6-4b2d-9d52-2c3456b8ef24}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Entities\Definitions">
+      <UniqueIdentifier>{d70e8a92-421c-4e37-a736-0b3d41e2c49e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="World\Definitions">
+      <UniqueIdentifier>{ae052891-7659-431a-971b-dcf96d772c9b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Main_Win32.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="TheApp.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="TheGame.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="GameCommon.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="World\Tile.cpp">
+      <Filter>World</Filter>
+    </ClCompile>
+    <ClCompile Include="World\MapGenStep.cpp">
+      <Filter>World</Filter>
+    </ClCompile>
+    <ClCompile Include="World\Map.cpp">
+      <Filter>World</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="Entities\Actor.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="Entities/Entity.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="Entities\Player.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="Entities\PortalDefinition.cpp">
+      <Filter>Entities\Definitions</Filter>
+    </ClCompile>
+    <ClCompile Include="Entities\ProjectileDefinition.cpp">
+      <Filter>Entities\Definitions</Filter>
+    </ClCompile>
+    <ClCompile Include="Entities\EntityDefinition.cpp">
+      <Filter>Entities\Definitions</Filter>
+    </ClCompile>
+    <ClCompile Include="Entities\ActorDefinition.cpp">
+      <Filter>Entities\Definitions</Filter>
+    </ClCompile>
+    <ClCompile Include="Entities\Projectile.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="Entities\Portal.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="World\MapDefinition.cpp">
+      <Filter>World\Definitions</Filter>
+    </ClCompile>
+    <ClCompile Include="World\TileDefinition.cpp">
+      <Filter>World\Definitions</Filter>
+    </ClCompile>
+    <ClCompile Include="World\AdventureDefinition.cpp">
+      <Filter>World\Definitions</Filter>
+    </ClCompile>
+    <ClCompile Include="World\Adventure.cpp">
+      <Filter>World</Filter>
+    </ClCompile>
+    <ClCompile Include="World\RaycastResult2D.cpp">
+      <Filter>World</Filter>
+    </ClCompile>
+    <ClCompile Include="Tags.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="Entities\ItemDefinition.cpp">
+      <Filter>Entities\Definitions</Filter>
+    </ClCompile>
+    <ClCompile Include="Entities\Item.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="Entities\LootDefinition.cpp">
+      <Filter>Entities\Definitions</Filter>
+    </ClCompile>
+    <ClCompile Include="Dialogue.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="TheApp.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="TheGame.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCommon.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineBuildPreferences.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="World\Tile.hpp">
+      <Filter>World</Filter>
+    </ClInclude>
+    <ClInclude Include="World\MapGenStep.hpp">
+      <Filter>World</Filter>
+    </ClInclude>
+    <ClInclude Include="World\Map.hpp">
+      <Filter>World</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="Entities\Actor.hpp">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Entities/Entity.hpp">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Entities\Player.hpp">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Entities\PortalDefinition.hpp">
+      <Filter>Entities\Definitions</Filter>
+    </ClInclude>
+    <ClInclude Include="Entities\ProjectileDefinition.hpp">
+      <Filter>Entities\Definitions</Filter>
+    </ClInclude>
+    <ClInclude Include="Entities\EntityDefinition.hpp">
+      <Filter>Entities\Definitions</Filter>
+    </ClInclude>
+    <ClInclude Include="Entities\ActorDefinition.hpp">
+      <Filter>Entities\Definitions</Filter>
+    </ClInclude>
+    <ClInclude Include="Entities\Projectile.hpp">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Entities\Portal.hpp">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="World\MapDefinition.hpp">
+      <Filter>World\Definitions</Filter>
+    </ClInclude>
+    <ClInclude Include="World\TileDefinition.hpp">
+      <Filter>World\Definitions</Filter>
+    </ClInclude>
+    <ClInclude Include="World\AdventureDefinition.hpp">
+      <Filter>World\Definitions</Filter>
+    </ClInclude>
+    <ClInclude Include="World\Adventure.hpp">
+      <Filter>World</Filter>
+    </ClInclude>
+    <ClInclude Include="World\RaycastResult2D.hpp">
+      <Filter>World</Filter>
+    </ClInclude>
+    <ClInclude Include="Entities\Stats.hpp">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Tags.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="Entities\ItemDefinition.hpp">
+      <Filter>Entities\Definitions</Filter>
+    </ClInclude>
+    <ClInclude Include="Entities\Item.hpp">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Entities\LootDefinition.hpp">
+      <Filter>Entities\Definitions</Filter>
+    </ClInclude>
+    <ClInclude Include="Dialogue.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="..\..\Run_Win32\Data\GameConfig.xml">
+      <Filter>DataFiles</Filter>
+    </Xml>
+    <Xml Include="..\..\Run_Win32\Data\Definitions\Maps.xml">
+      <Filter>DataFiles\Definitions</Filter>
+    </Xml>
+    <Xml Include="..\..\Run_Win32\Data\Definitions\Tiles.xml">
+      <Filter>DataFiles\Definitions</Filter>
+    </Xml>
+    <Xml Include="..\..\Run_Win32\Data\Definitions\Actors.xml">
+      <Filter>DataFiles\Definitions</Filter>
+    </Xml>
+    <Xml Include="..\..\Run_Win32\Data\Definitions\Projectiles.xml">
+      <Filter>DataFiles\Definitions</Filter>
+    </Xml>
+    <Xml Include="..\..\Run_Win32\Data\Definitions\Portals.xml">
+      <Filter>DataFiles\Definitions</Filter>
+    </Xml>
+    <Xml Include="..\..\Run_Win32\Data\Definitions\Adventures.xml">
+      <Filter>DataFiles\Definitions</Filter>
+    </Xml>
+    <Xml Include="..\..\Run_Win32\Data\Definitions\Items.xml">
+      <Filter>DataFiles\Definitions</Filter>
+    </Xml>
+    <Xml Include="..\..\Run_Win32\Data\Definitions\Loot.xml">
+      <Filter>DataFiles\Definitions</Filter>
+    </Xml>
+  </ItemGroup>
+</Project>

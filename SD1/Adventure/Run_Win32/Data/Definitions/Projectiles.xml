@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ProjectileDefinitions>
+
+  <ProjectileDefinition name="MeleeHitbox" lifetime="0.05" >
+    <Physics physicsRadius="0.125" localDrawBounds="-0.125,-0.075,0.125,0.2825" knockback="0.1" />
+    <Stats agility="0" strength="1" />
+    <Attack actorSet="otherActors" />
+    <Movement>
+      <Fly />
+    </Movement>
+    <SpriteAnimSet spriteSheet="Items.png" spriteLayout="13,15" fps="1" >
+      <SpriteAnim name="Idle" spriteIndices="153" orientationOffset="0" playbackMode="1" />
+    </SpriteAnimSet>
+  </ProjectileDefinition>
+
+  <ProjectileDefinition name="ShortRangeMeleeHitbox" lifetime="0.05" >
+    <Physics physicsRadius="0.2" localDrawBounds="-0.125,-0.075,0.125,0.2825" knockback="0.2" />
+    <Stats agility="0" strength="1" />
+    <Attack actorSet="otherActors" />
+    <Movement>
+      <Fly />
+    </Movement>
+    <SpriteAnimSet spriteSheet="Items.png" spriteLayout="13,15" fps="1" >
+      <SpriteAnim name="Idle" spriteIndices="153" orientationOffset="0" playbackMode="1" />
+    </SpriteAnimSet>
+  </ProjectileDefinition>
+
+  <ProjectileDefinition name="Arrow" tags="deadly,!explosive" >
+    <Physics physicsRadius="0.075" localDrawBounds="-0.125,-0.075,0.125,0.2825" knockback="0.25" />
+    <Stats agility="7" strength="4" />
+    <Attack actorSet="otherFactions" />
+    <Movement>
+      <Fly />
+    </Movement>
+    <SpriteAnimSet spriteSheet="Items.png" spriteLayout="13,15" fps="1" >
+      <SpriteAnim name="Idle" spriteIndices="96" autoOrient="true" orientationOffset="55" playbackMode="1" />
+    </SpriteAnimSet>
+  </ProjectileDefinition>
+
+  <ProjectileDefinition name="Fireball" tags="explosive" >
+    <Physics physicsRadius="0.1" localDrawBounds="-0.125,-0.075,0.125,0.2825" knockback="0.25" />
+    <Stats agility="5" fire="2" />
+    <Attack actorSet="otherFactions" />
+    <Movement>
+      <Fly />
+    </Movement>
+    <SpriteAnimSet spriteSheet="Terrain_32x32.png" spriteLayout="32,32" fps="1" >
+      <SpriteAnim name="Idle" spriteIndices="844" playbackMode="1" />
+    </SpriteAnimSet>
+  </ProjectileDefinition>
+
+  <ProjectileDefinition name="Ice Shard" tags="explosive" >
+    <Physics physicsRadius="0.1" localDrawBounds="-0.125,-0.075,0.125,0.2825" knockback="0.3" />
+    <Stats agility="4" ice="2" />
+    <Attack actorSet="otherFactions" />
+    <Movement>
+      <Fly />
+    </Movement>
+    <SpriteAnimSet spriteSheet="Terrain_32x32.png" spriteLayout="32,32" fps="1" >
+      <SpriteAnim name="Idle" spriteIndices="856" playbackMode="1" />
+    </SpriteAnimSet>
+  </ProjectileDefinition>
+
+  <ProjectileDefinition name="Poison Barb" tags="explosive" >
+    <Physics physicsRadius="0.1" localDrawBounds="-0.125,-0.075,0.125,0.2825" knockback="0.3" />
+    <Stats agility="4" poison="2" />
+    <Attack actorSet="otherFactions" />
+    <Movement>
+      <Fly />
+    </Movement>
+    <SpriteAnimSet spriteSheet="Terrain_32x32.png" spriteLayout="32,32" fps="1" >
+      <SpriteAnim name="Idle" spriteIndices="535" playbackMode="1" />
+    </SpriteAnimSet>
+  </ProjectileDefinition>
+
+  <ProjectileDefinition name="Spark" tags="explosive" >
+    <Physics physicsRadius="0.1" localDrawBounds="-0.125,-0.075,0.125,0.2825" knockback="0.5" />
+    <Stats agility="8" electricity="1" />
+    <Attack actorSet="otherFactions" />
+    <Movement>
+      <Fly />
+    </Movement>
+    <SpriteAnimSet spriteSheet="Terrain_32x32.png" spriteLayout="32,32" fps="1" >
+      <SpriteAnim name="Idle" spriteIndices="596" playbackMode="1" />
+    </SpriteAnimSet>
+  </ProjectileDefinition>
+  
+</ProjectileDefinitions>

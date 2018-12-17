@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AdventureDefinitions>
+
+  <AdventureDefinition name="Orc" title="Kill the Orc">
+    <StartCondition startMap="The Village" onTileType="Grass"/>
+    <VictoryCondition haveDied="Orc"/>
+    <Dialogue>
+      <Start text="You must defeat the Orc nestled deep within the Temple of Evil!" bounds="0.0,0.0,1.0,0.4" style="Progressive" />
+      <Victory text="You have successfully finished the Adventure!" bounds="0.0,0.0,1.0,0.4" style="Progressive" />
+      <Defeat text="You have died..." bounds="0.0,0.0,1.0,0.4" style="Progressive" />
+    </Dialogue>
+    <Map name="The Village" mapDefinition="Village">
+      <Portal type="StairsDown" onTileType="Grass" toMap="Upper Crypt"
+                  toTileType="StoneFloor" reciprocalType="StairsUp"/>
+      <Item type="Fire Tome" onTileType="StoneFloor" />
+      <Item type="Lightning Tome" onTileType="StoneFloor" />
+      <Item type="Ice Tome" onTileType="StoneFloor" />
+      <Item type="Poison Tome" onTileType="StoneFloor" />
+      <Actor type="Mercenary" onTileType="StoneFloor" />
+    </Map>
+    <Map name="Upper Crypt" mapDefinition="Crypt">
+      <Portal type="StairsDown" onTileType="StoneFloor" toMap="Lower Crypt"
+                  toTileType="StoneFloor" reciprocalType="StairsUp"/>
+    </Map>
+    <Map name="Lower Crypt" mapDefinition="Crypt">
+      <Portal type="TeleportVortex" toMap="Temple of Evil" reciprocalType="TeleportVortex"/>
+    </Map>
+    <Map name="Temple of Evil" mapDefinition="DungeonTemple">
+      <Actor type="Orc" onTileType="Altar"/>
+    </Map>
+  </AdventureDefinition>
+
+  <AdventureDefinition name="Mercenaries" title="Kill 4 specific Mercenaries">
+    <StartCondition startMap="The Base" onTileType="Sand"/>
+    <VictoryCondition haveDied="Mercenary"/>
+    <VictoryCondition haveDied="Mercenary"/>
+    <VictoryCondition haveDied="Mercenary"/>
+    <VictoryCondition haveDied="Mercenary"/>
+    <Map name="The Base" mapDefinition="IslandBase">
+      <Item type="Bow" onTileType="Sand" />
+      <Item type="Scout Helmet" onTileType="Sand" />
+      <Item type="Iron Armor" onTileType="Sand" />
+      <Item type="Agile Boots" onTileType="Sand" />
+      <Item type="Poison Tome" onTileType="Sand" />
+      <Item type="Lightning Tome" onTileType="Sand" />
+      <Item type="Herb" onTileType="Sand" />
+      <Item type="Herb" onTileType="Sand" />
+      <Item type="Herb" onTileType="Sand" />
+      <Actor type="Mercenary" onTileType="Sand"/>
+      <Actor type="Mercenary" onTileType="Sand"/>
+      <Actor type="Mercenary" onTileType="Sand"/>
+      <Actor type="Mercenary" onTileType="Sand"/>
+    </Map>
+  </AdventureDefinition>
+
+  <AdventureDefinition name="Ice World" title="Kill all Dark Elves">
+    <StartCondition startMap="The Cave" onTileType="Snow"/>
+    <VictoryCondition haveDied="Dark Elf"/>
+    <VictoryCondition haveDied="Dark Elf"/>
+    <VictoryCondition haveDied="Dark Elf"/>
+    <VictoryCondition haveDied="Dark Elf"/>
+    <Map name="The Cave" mapDefinition="IceCave">
+      <Item type="Scout Helmet" onTileType="Snow" />
+      <Item type="Iron Armor" onTileType="Snow" />
+      <Item type="Dexterous Boots" onTileType="Snow" />
+      <Item type="Ice Tome" onTileType="Ice" />
+      <Item type="Fire Tome" onTileType="Ice" />
+      <Item type="Ice Tome" onTileType="Snow" />
+      <Item type="Fire Tome" onTileType="Snow" />
+      <Item type="Herb" onTileType="Snow" />
+      <Item type="Herb" onTileType="Snow" />
+      <Item type="Herb" onTileType="Snow" />
+      <Actor type="Dark Elf" onTileType="Ice"/>
+      <Actor type="Dark Elf" onTileType="Ice"/>
+      <Actor type="Dark Elf" onTileType="Snow"/>
+      <Actor type="Dark Elf" onTileType="Ice"/>
+    </Map>
+  </AdventureDefinition>
+
+</AdventureDefinitions>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LootDefinitions>
+  <LootDefinition name="Healing">
+    <Item type="Herb" />
+  </LootDefinition>
+  <LootDefinition name="Uncommon">
+    <Item type="Dagger" />
+    <Item type="Scout Helmet" />
+    <Item type="Agile Boots" />
+    <Item type="Dexterous Boots" />
+  </LootDefinition>
+  <LootDefinition name="Rare">
+    <Item type="Fire Tome" />
+    <Item type="Ice Tome" />
+    <Item type="Poison Tome" />
+    <Item type="Lightning Tome" />
+  </LootDefinition>
+</LootDefinitions>

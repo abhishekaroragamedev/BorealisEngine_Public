@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MapDefinitions>
+  
+  <MapDefinition name="Island" defaultTile="Water" width="19~32" height="10~18">
+     <GenerationSteps>
+       <FillAndEdge fillTile="Sand" edgeTile="Water" iterations="1" />
+       <Mutate oldTile="Sand" newTile="Grass" mutationChance="0.1" iterations="2" />
+     </GenerationSteps>
+  </MapDefinition>
+
+  <MapDefinition name="IslandBase" defaultTile="Water" width="19~32" height="10~18">
+    <GenerationSteps>
+      <FillAndEdge fillTile="Sand" edgeTile="Water" iterations="1" />
+      <Mutate oldTile="Sand" newTile="WoodWall" mutationChance="0.1" iterations="1" />
+      <Mutate oldTile="Sand" newTile="Water" mutationChance="0.1" iterations="1" />
+      <SpawnActor type="Mercenary" iterations="2~4" />
+    </GenerationSteps>
+  </MapDefinition>
+
+  <MapDefinition name="Village" defaultTile="Grass" width="19~32" height="10~18">
+    <GenerationSteps>
+      <FillAndEdge fillTile="Grass" edgeTile="GrassyWall" iterations="1" />
+      <Mutate oldTile="Grass" newTile="StoneFloor" mutationChance="0.1" iterations="1" />
+      <SpawnItem type="Herb" onTile="Grass" iterations="2~4" />
+      <SpawnItem type="Bow" chanceToRun="0.5" />
+      <SpawnItem type="Dagger" />
+      <SpawnItem type="Iron Armor" />
+      <SpawnItem type="Iron Helmet" />
+    </GenerationSteps>
+  </MapDefinition>
+
+  <MapDefinition name="Cellar" defaultTile="StoneFloor" width="19~32" height="10~18">
+    <GenerationSteps>
+      <FillAndEdge fillTile="StoneFloor" edgeTile="StoneWall" iterations="1" />
+      <Mutate oldTile="StoneFloor" newTile="Water" mutationChance="0.1" iterations="2" />
+      <SpawnActor type="Skeleton" iterations="2~4" />
+      <SpawnItem type="Fire Tome" onTile="StoneFloor" />
+    </GenerationSteps>
+  </MapDefinition>
+
+  <MapDefinition name="IceCave" defaultTile="Snow" width="19~32" height="10~18">
+    <GenerationSteps>
+      <FillAndEdge fillTile="Snow" edgeTile="IceWall" iterations="1" />
+      <Mutate oldTile="Snow" newTile="Ice" mutationChance="0.5" iterations="2" />
+      <Mutate oldTile="Ice" newTile="Water" mutationChance="0.3" iterations="2" />
+      <SpawnItem type="Ice Tome" onTile="Ice" />
+    </GenerationSteps>
+  </MapDefinition>
+
+  <MapDefinition name="Crypt" defaultTile="StoneFloor" width="19~32" height="10~18">
+    <GenerationSteps>
+      <FillAndEdge fillTile="StoneFloor" edgeTile="StoneWall" iterations="1" />
+      <Mutate oldTile="StoneFloor" newTile="Lava" mutationChance="0.1" iterations="2" />
+      <SpawnActor type="Skeleton" iterations="4~7" />
+      <SpawnItem type="Herb" />
+    </GenerationSteps>
+  </MapDefinition>
+
+  <MapDefinition name="DungeonTemple" defaultTile="StoneFloor" width="32" height="32">
+    <GenerationSteps>
+      <FromFile imageFile="Data/Images/DungeonTemple.png" />
+      <SpawnActor type="Skeleton" iterations="2~3" chanceToRun="0.5" />
+      <SpawnItem type="Fire Tome" />
+    </GenerationSteps>
+  </MapDefinition>
+  
+</MapDefinitions>

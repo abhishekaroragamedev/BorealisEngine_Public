@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PortalDefinitions>
+
+  <PortalDefinition name="TeleportVortex">
+    <Physics physicsRadius="0.5" localDrawBounds="-0.5,-0.5,0.5,0.5"/>
+    <Movement>
+      <Fly />
+    </Movement>
+    <SpriteAnimSet spriteSheet="Terrain_32x32.png" spriteLayout="32,32" fps="10">
+      <SpriteAnim name="Idle" spriteIndices="417"/>
+    </SpriteAnimSet>
+  </PortalDefinition>
+
+  <PortalDefinition name="StairsUp">
+    <Physics physicsRadius="0.5" localDrawBounds="-0.5,-0.5,0.5,0.5"/>
+    <Movement>
+      <Walk />
+    </Movement>
+    <SpriteAnimSet spriteSheet="Terrain_32x32.png" spriteLayout="32,32" fps="10">
+      <SpriteAnim name="Idle" spriteIndices="478"/>
+    </SpriteAnimSet>
+  </PortalDefinition>
+
+  <PortalDefinition name="StairsDown">
+    <Physics physicsRadius="0.5" localDrawBounds="-0.5,-0.5,0.5,0.5"/>
+    <Movement>
+      <Walk />
+    </Movement>
+    <SpriteAnimSet spriteSheet="Terrain_32x32.png" spriteLayout="32,32" fps="10">
+      <SpriteAnim name="Idle" spriteIndices="446"/>
+    </SpriteAnimSet>
+  </PortalDefinition>
+
+</PortalDefinitions>
