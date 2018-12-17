@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GameConfig
+	
+	startLevel="WizardTower3"
+	windowAspect="1.777"
+	isFullscreen="false"
+  spawnColor="200,244,1,20"
+	
+/>

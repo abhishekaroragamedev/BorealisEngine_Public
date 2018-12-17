@@ -1,0 +1,272 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="General">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="DataFiles">
+      <UniqueIdentifier>{e5ac01e5-ffb8-4231-9105-79b2fd8d4d35}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameStates">
+      <UniqueIdentifier>{a77cc6e0-55bb-4f3d-ba87-accc7d9d6c37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="World">
+      <UniqueIdentifier>{5a5d755e-d2f7-4d36-8773-a3fc0062f769}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utilities">
+      <UniqueIdentifier>{9a127a45-1ed9-477a-a679-215def23cb50}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{0cc8215d-a3f0-4c6d-bdb7-3fde41a6cfab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\MathUtils">
+      <UniqueIdentifier>{5ee272e5-a22a-4281-8cd0-ab6cb3ada665}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Main_Win32.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="TheApp.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="TheGame.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="Entities/Entity.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="GameCommon.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="GameStates\LoadingGameState.cpp">
+      <Filter>GameStates</Filter>
+    </ClCompile>
+    <ClCompile Include="GameStates\MenuGameState.cpp">
+      <Filter>GameStates</Filter>
+    </ClCompile>
+    <ClCompile Include="World\Block.cpp">
+      <Filter>World</Filter>
+    </ClCompile>
+    <ClCompile Include="World\BlockDefinition.cpp">
+      <Filter>World</Filter>
+    </ClCompile>
+    <ClCompile Include="World\Map.cpp">
+      <Filter>World</Filter>
+    </ClCompile>
+    <ClCompile Include="GameStates\EncounterGameState.cpp">
+      <Filter>GameStates</Filter>
+    </ClCompile>
+    <ClCompile Include="Encounter.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="Action.cpp">
+      <Filter>GameStates</Filter>
+    </ClCompile>
+    <ClCompile Include="EncounterMode.cpp">
+      <Filter>GameStates</Filter>
+    </ClCompile>
+    <ClCompile Include="Utilities\IsometricSpriteAnimationSet.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="TacticsNetMessage.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="TheApp.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="TheGame.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCommon.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="Entities/Entity.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineBuildPreferences.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="GameStates\GameState.hpp">
+      <Filter>GameStates</Filter>
+    </ClInclude>
+    <ClInclude Include="GameStates\LoadingGameState.hpp">
+      <Filter>GameStates</Filter>
+    </ClInclude>
+    <ClInclude Include="GameStates\MenuGameState.hpp">
+      <Filter>GameStates</Filter>
+    </ClInclude>
+    <ClInclude Include="World\Block.hpp">
+      <Filter>World</Filter>
+    </ClInclude>
+    <ClInclude Include="World\BlockDefinition.hpp">
+      <Filter>World</Filter>
+    </ClInclude>
+    <ClInclude Include="World\Map.hpp">
+      <Filter>World</Filter>
+    </ClInclude>
+    <ClInclude Include="GameStates\EncounterGameState.hpp">
+      <Filter>GameStates</Filter>
+    </ClInclude>
+    <ClInclude Include="Encounter.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="Action.hpp">
+      <Filter>GameStates</Filter>
+    </ClInclude>
+    <ClInclude Include="EncounterMode.hpp">
+      <Filter>GameStates</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities\IsometricSpriteAnimationSet.hpp">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="TacticsNetMessage.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="..\..\Run_Win32\Data\GameConfig.xml">
+      <Filter>DataFiles</Filter>
+    </Xml>
+    <Xml Include="..\..\Run_Win32\Data\Shaders\Materials.xml">
+      <Filter>Shaders</Filter>
+    </Xml>
+    <Xml Include="..\..\Run_Win32\Data\Shaders\Shaders.xml">
+      <Filter>Shaders</Filter>
+    </Xml>
+    <Xml Include="..\..\Run_Win32\Data\Definitions\ActorDefinitions.xml">
+      <Filter>DataFiles</Filter>
+    </Xml>
+    <Xml Include="..\..\Run_Win32\Data\Definitions\EncounterDefinitions.xml">
+      <Filter>DataFiles</Filter>
+    </Xml>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Run_Win32\Data\Shaders\AdditiveFlat.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\AdditiveFlat.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\BloomBlur.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\BloomBlur.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\BoxOutline.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\BoxOutline.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\DamageNumber.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\DamageNumber.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\DebugRender.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\DebugRender.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\Default.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\Default.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\DefaultLit.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\DefaultLit.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\DefaultUI.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\DefaultUI.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\FS_Grayscale.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\FS_Grayscale.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\FullscreenPassThrough.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\FullscreenPassThrough.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\Invalid.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\Invalid.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\LitNormalDebug.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\LitNormalDebug.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\MotionBlur.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\MotionBlur.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\OculusVRFlipY.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\OculusVRFlipY.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\PassThrough.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\PassThrough.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\ShadowMap.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\ShadowMap.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\Skybox.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\Skybox.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\TextEdgeDetection.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\TextEdgeDetection.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\UV.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\UV.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\MathUtils\RangeMap.glsl">
+      <Filter>Shaders\MathUtils</Filter>
+    </None>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<EncounterDefinitions>
+	<EncounterDefinition name="Plains">
+		<Map fileName="Data/Images/Map0.png" maxHeight="8" />
+		<Actors>
+			<Actor definition="Archer" team="Red" name="Iola" position="1,1" />
+			<Actor definition="Archer" team="Blue" name="Lorelei" position="4,3" />
+		</Actors>
+	</EncounterDefinition>
+	<EncounterDefinition name="Fortress">
+		<Map fileName="Data/Images/Map1.png" maxHeight="10" />
+		<Actors>
+			<Actor definition="Archer" team="Blue" name="Lily" position="1,1" />
+			<Actor definition="Knight" team="Blue" name="Lorelei" position="7,8" />
+			<Actor definition="Mage" team="Blue" name="Agatha" position="11,8" />
+			<Actor definition="Archer" team="Red" name="Aela" position="5,6" />
+			<Actor definition="Knight" team="Red" name="Whitney" position="4,3" />
+			<Actor definition="Mage" team="Red" name="Sabrina" position="3,5" />
+		</Actors>
+	</EncounterDefinition>
+</EncounterDefinitions>

@@ -1,0 +1,10 @@
+Debug [12:12:17 12/17/2018]: Failed to set the format: 2000
+Debug [12:12:17 12/17/2018]: Failed to set the format: 2000
+Network [12:12:19 12/17/2018]: Address[IPv4]: 192.168.1.5
+Log [12:12:20 12/17/2018]: RemoteCommandService: Not in valid state! Trying to join local server...
+Log [12:12:20 12/17/2018]: [CLIENT] RemoteCommandService: Successfully joined 192.168.1.5:29283 as client.
+Log [12:12:25 12/17/2018]: UDPSocket::Bind(): Successfully bound to 192.168.1.5:10085.
+OnJoinAccept [12:12:26 12/17/2018]: Join finished.
+OnJoinFinished [12:12:26 12/17/2018]: Join finished.
+Log [12:16:00 12/17/2018]: [CLIENT] RemoteCommandService: Attempting to shut down client...
+Log [12:16:00 12/17/2018]: RemoteCommandService: Client shut down gracefully.

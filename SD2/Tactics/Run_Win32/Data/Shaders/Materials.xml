@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Materials>
+<!-- Engine Materials -->
+  <Material name="UI" shader="DefaultUI" />
+	<Material name="Bloom" shader="Bloom">
+		<Texture fileName="Data/Images/Texture_Default.png" />
+		<Texture fileName="Data/Images/Texture_Default_Normal.png" />
+	</Material>
+	<Material name="MotionBlur" shader="MotionBlur">
+		<Texture fileName="Data/Images/Texture_Default.png" />
+		
+		<Float name="BLUR_FACTOR" defaultValue="0.0" />
+	</Material>
+	<Material name="MotionBlur" shader="MotionBlur">
+		<Texture fileName="Data/Images/Texture_Default.png" />
+		
+		<Float name="BLUR_FACTOR" defaultValue="0.0" />
+	</Material>
+	<Material name="ShadowMap" shader="ShadowMap" />
+<!-- Game-specific Materials -->
+</Materials>

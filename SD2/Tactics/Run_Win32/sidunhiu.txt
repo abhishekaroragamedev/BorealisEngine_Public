@@ -1,0 +1,10 @@
+Entered Loading State.
+Leaving Loading State.
+Entered Menu State.
+Running command 'dfoignjoi'...
+ERROR: Invalid command entered. Enter "help" to view available commands.
+COMMAND FAILED: 'dfoignjoi'
+Running command 'asdflokm'...
+ERROR: Invalid command entered. Enter "help" to view available commands.
+COMMAND FAILED: 'asdflokm'
+Running command 'save_log sidunhiu.txt'...

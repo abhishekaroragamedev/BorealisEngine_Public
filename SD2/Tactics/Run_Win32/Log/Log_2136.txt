@@ -1,0 +1,21 @@
+Debug [12:12:06 12/17/2018]: Failed to set the format: 2000
+Debug [12:12:06 12/17/2018]: Failed to set the format: 2000
+Network [12:12:07 12/17/2018]: Address[IPv4]: 192.168.1.5
+Log [12:12:08 12/17/2018]: RemoteCommandService: Not in valid state! Trying to join local server...
+ERROR [12:12:09 12/17/2018]: TCPSocket::Connect(): Could not connect.
+Log [12:12:09 12/17/2018]: RemoteCommandService: Could not join 192.168.1.5:29283 as client.
+Log [12:12:09 12/17/2018]: RemoteCommandService: Failed to join local server! Trying to create local server at default port...
+TCPSocket::Listen() [12:12:09 12/17/2018]: Binding to all available addresses, including 127.0.0.1.
+TCPSocket::Listen() [12:12:09 12/17/2018]: Listening on 192.168.1.5:29283.
+Log [12:12:09 12/17/2018]: [ SERVER ] RemoteCommandService: Listening on port 29283.
+Log [12:12:11 12/17/2018]: UDPSocket::Bind(): Successfully bound to 192.168.1.5:10084.
+Log [12:12:20 12/17/2018]: TCPSocket::Accept(): Connection accepted.
+Log [12:12:20 12/17/2018]: [SERVER] RemoteCommandService: Client connected: 192.168.1.5:51150.
+OnJoinRequest [12:12:26 12/17/2018]: Request received from 192.168.1.5:10085
+OnJoinRequest [12:12:26 12/17/2018]: Join accepted.
+OnJoinRequest [12:12:26 12/17/2018]: Join finished.
+OnUpdateConnectionState [12:12:26 12/17/2018]: Updated state: 0.
+Log [12:16:00 12/17/2018]: Connection 1 hung up.
+ERROR [12:16:00 12/17/2018]: Socket::HasFatalError(): Socket operation failed with error error 0.
+Log [12:16:07 12/17/2018]: [CLIENT] RemoteCommandService: Attempting to shut down server...
+Log [12:16:07 12/17/2018]: RemoteCommandService: Server shut down gracefully.

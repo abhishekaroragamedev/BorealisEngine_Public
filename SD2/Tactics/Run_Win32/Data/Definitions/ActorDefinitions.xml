@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ActorDefinitions>
+	<ActorDefinition name="Archer" >
+		<Stats maxHealth="60" moveSpeed="5" jumpHeight="3" strength="12" actionSpeed="3" height="1" />
+		<Actions>
+			<Wait />
+			<Move />
+			<Bow />
+		</Actions>
+		<IsoSpriteAnimSet>
+			<SpriteAnimSet spriteSheet="Archer.png" spriteLayout="11,8" fps="10" flipY="true" > <!-- "TR" = TowardsRight, "AL" = AwayLeft -->
+				<!-- Idle -->
+				<SpriteAnim name="IdleTR" playbackMode="1" >	
+					<Sprite id="ArcherFIdleTR" ppu="16" uv="10,14,25,40" pivot="0.5,0.0" />
+				</SpriteAnim>
+				<SpriteAnim name="IdleAL" playbackMode="1" >
+					<Sprite id="ArcherFIdleAL" ppu="16" uv="10,46,24,72" pivot="0.5,0.0" />
+				</SpriteAnim>
+				<!-- Walk -->
+				<SpriteAnim name="WalkTR" playbackMode="1" >
+					<Sprite id="ArcherFWalk0TR" ppu="16" uv="30,12,46,39" pivot="0.5,0.0" />
+					<Sprite id="ArcherFWalk1TR" ppu="16" uv="50,13,65,38" pivot="0.5,0.0" />
+				</SpriteAnim>
+				<SpriteAnim name="WalkAL" playbackMode="1" >
+					<Sprite id="ArcherFWalk0AL" ppu="16" uv="30,45,44,70" pivot="0.5,0.0" />
+					<Sprite id="ArcherFWalk1AL" ppu="16" uv="49,44,65,72" pivot="0.5,0.0" />
+				</SpriteAnim>
+				<!-- Weak -->
+				<SpriteAnim name="WeakTR" playbackMode="1" >
+					<Sprite id="ArcherFWeakTR" ppu="16" uv="90,15,106,40" pivot="0.5,0.0" />
+				</SpriteAnim>
+				<SpriteAnim name="WeakAL" playbackMode="1" >
+					<Sprite id="ArcherFWeakAL" ppu="16" uv="90,47,105,72" pivot="0.5,0.0" />
+				</SpriteAnim>
+				<!-- Hit -->
+				<SpriteAnim name="HitTR" playbackMode="0" >
+					<Sprite id="ArcherFHitTR" ppu="16" uv="70,12,86,40" pivot="0.5,0.0" />
+				</SpriteAnim>
+				<SpriteAnim name="HitAL" playbackMode="0" >
+					<Sprite id="ArcherFHitAL" ppu="16" uv="70,44,85,72" pivot="0.5,0.0" />
+				</SpriteAnim>
+				<!-- Jump -->
+				<SpriteAnim name="JumpTR" playbackMode="0" >
+					<Sprite id="ArcherFJumpTR" ppu="16" uv="70,12,86,40" pivot="0.5,0.0" />
+				</SpriteAnim>
+				<SpriteAnim name="JumpAL" playbackMode="0" >
+					<Sprite id="ArcherFJumpAL" ppu="16" uv="70,44,85,72" pivot="0.5,0.0" />
+				</SpriteAnim>
+				<!-- Crouch -->
+				<SpriteAnim name="CrouchTR" playbackMode="1" >
+					<Sprite id="ArcherFCrouchTR" ppu="16" uv="129,15,145,40" pivot="0.5,0.0" />
+				</SpriteAnim>
+				<SpriteAnim name="CrouchAL" playbackMode="1" >
+					<Sprite id="ArcherFCrouchAL" ppu="16" uv="130,49,145,72" pivot="0.5,0.0" />
+				</SpriteAnim>
+				<!-- Attack -->
+				<SpriteAnim name="AttackTR" playbackMode="0" >
+					<Sprite id="ArcherFAttack0TR" ppu="16" uv="30,79,46,104" pivot="0.5,0.0" />
+					<Sprite id="ArcherFAttack1TR" ppu="16" uv="50,78,65,104" pivot="0.5,0.0" />
+					<Sprite id="ArcherFAttack2TR" ppu="16" uv="70,79,85,104" pivot="0.5,0.0" />
+					<Sprite id="ArcherFAttack3TR" ppu="16" uv="89,78,107,104" pivot="0.5,0.0" />
+					<Sprite id="ArcherFAttack4TR" ppu="16" uv="110,78,126,104" pivot="0.5,0.0" />
+				</SpriteAnim>
+				<SpriteAnim name="AttackAL" playbackMode="0" >
+					<Sprite id="ArcherFAttack0AL" ppu="16" uv="31,108,46,136" pivot="0.5,0.0" />
+					<Sprite id="ArcherFAttack1AL" ppu="16" uv="50,110,66,136" pivot="0.5,0.0" />
+					<Sprite id="ArcherFAttack2AL" ppu="16" uv="71,111,85,136" pivot="0.5,0.0" />
+					<Sprite id="ArcherFAttack3AL" ppu="16" uv="88,109,105,136" pivot="0.5,0.0" />
+					<Sprite id="ArcherFAttack4AL" ppu="16" uv="110,109,125,136" pivot="0.5,0.0" />
+				</SpriteAnim>
+				<!-- Cast -->
+				<SpriteAnim name="CastTR" playbackMode="0" >
+					<Sprite id="ArcherFCastTR" ppu="16" uv="111,13,126,40" pivot="0.5,0.0" />
+				</SpriteAnim>
+				<SpriteAnim name="CastAL" playbackMode="0" >
+					<Sprite id="ArcherFCastAL" ppu="16" uv="110,46,124,72" pivot="0.5,0.0" />
+				</SpriteAnim>
+				<!-- Dead -->
+				<SpriteAnim name="DeadTR" playbackMode="1" >
+					<Sprite id="ArcherFDeadTR" ppu="16" uv="10,85,26,104" pivot="0.5,0.5" />
+				</SpriteAnim>
+				<SpriteAnim name="DeadAL" playbackMode="1" >
+					<Sprite id="ArcherFDeadAL" ppu="16" uv="10,116,25,136" pivot="0.5,0.5" />
+				</SpriteAnim>
+			</SpriteAnimSet>
+		</IsoSpriteAnimSet>
+	</ActorDefinition>
+	<ActorDefinition name="Knight" >
+		<Stats maxHealth="100" moveSpeed="4" jumpHeight="1" strength="15" actionSpeed="2" height="1" />
+		<Actions>
+			<Wait />
+			<Move />
+			<Attack />
+			<Defend />
+		</Actions>
+		<IsoSpriteAnimSet>
+			<SpriteAnimSet spriteSheet="Knight.png" spriteLayout="11,8" fps="10" flipY="true" > <!-- "TR" = TowardsRight, "AL" = AwayLeft -->
+				<!-- Idle -->
+				<SpriteAnim name="IdleTR" playbackMode="1" >	
+					<Sprite id="KnightFIdleTR" ppu="16" uv="11,15,26,40" pivot="0.5,0.0" />
+				</SpriteAnim>
+				<SpriteAnim name="IdleAL" playbackMode="1" >
+					<Sprite id="KnightFIdleAL" ppu="16" uv="12,47,26,72" pivot="0.5,0.0" />
+				</SpriteAnim>
+				<!-- Walk -->
+				<SpriteAnim name="WalkTR" playbackMode="1" >
+					<Sprite id="KnightFWalk0TR" ppu="16" uv="31,14,47,39" pivot="0.5,0.0" />
+					<Sprite id="KnightFWalk1TR" ppu="16" uv="51,14,66,38" pivot="0.5,0.0" />
+				</SpriteAnim>
+				<SpriteAnim name="WalkAL" playbackMode="1" >
+					<Sprite id="KnightFWalk0AL" ppu="16" uv="31,46,46,71" pivot="0.5,0.0" />
+					<Sprite id="KnightFWalk1AL" ppu="16" uv="51,46,66,72" pivot="0.5,0.0" />
+				</SpriteAnim>
+				<!-- Weak -->
+				<SpriteAnim name="WeakTR" playbackMode="1" >
+					<Sprite id="KnightFWeakTR" ppu="16" uv="91,16,107,40" pivot="0.5,0.0" />
+				</SpriteAnim>
+				<SpriteAnim name="WeakAL" playbackMode="1" >
+					<Sprite id="KnightFWeakAL" ppu="16" uv="91,47,106,72" pivot="0.5,0.0" />
+				</SpriteAnim>
+				<!-- Hit -->
+				<SpriteAnim name="HitTR" playbackMode="0" >
+					<Sprite id="KnightFHitTR" ppu="16" uv="71,14,87,40" pivot="0.5,0.0" />
+				</SpriteAnim>
+				<SpriteAnim name="HitAL" playbackMode="0" >
+					<Sprite id="KnightFHitAL" ppu="16" uv="71,47,87,72" pivot="0.5,0.0" />
+				</SpriteAnim>
+				<!-- Jump -->
+				<SpriteAnim name="JumpTR" playbackMode="0" >
+					<Sprite id="KnightFJumpTR" ppu="16" uv="70,12,86,40" pivot="0.5,0.0" />
+				</SpriteAnim>
+				<SpriteAnim name="JumpAL" playbackMode="0" >
+					<Sprite id="KnightFJumpAL" ppu="16" uv="70,44,85,72" pivot="0.5,0.0" />
+				</SpriteAnim>
+				<!-- Crouch -->
+				<SpriteAnim name="CrouchTR" playbackMode="1" >
+					<Sprite id="KnightFCrouchTR" ppu="16" uv="130,17,146,40" pivot="0.5,0.0" />
+				</SpriteAnim>
+				<SpriteAnim name="CrouchAL" playbackMode="1" >
+					<Sprite id="KnightFCrouchAL" ppu="16" uv="131,49,146,72" pivot="0.5,0.0" />
+				</SpriteAnim>
+				<!-- Attack -->
+				<SpriteAnim name="AttackTR" playbackMode="0" >
+					<Sprite id="KnightFAttack0TR" ppu="16" uv="30,79,48,104" pivot="0.5,0.0" />
+					<Sprite id="KnightFAttack1TR" ppu="16" uv="51,79,66,104" pivot="0.5,0.0" />
+					<Sprite id="KnightFAttack2TR" ppu="16" uv="70,78,85,102" pivot="0.5,0.0" />
+					<Sprite id="KnightFAttack3TR" ppu="16" uv="89,81,107,104" pivot="0.5,0.0" />
+					<Sprite id="KnightFAttack4TR" ppu="16" uv="109,81,127,104" pivot="0.5,0.0" />
+				</SpriteAnim>
+				<SpriteAnim name="AttackAL" playbackMode="0" >
+					<Sprite id="KnightFAttack0AL" ppu="16" uv="32,108,48,136" pivot="0.5,0.0" />
+					<Sprite id="KnightFAttack1AL" ppu="16" uv="51,111,66,136" pivot="0.5,0.0" />
+					<Sprite id="KnightFAttack2AL" ppu="16" uv="72,111,87,135" pivot="0.5,0.0" />
+					<Sprite id="KnightFAttack3AL" ppu="16" uv="88,110,107,136" pivot="0.5,0.0" />
+					<Sprite id="KnightFAttack4AL" ppu="16" uv="110,110,127,136" pivot="0.5,0.0" />
+				</SpriteAnim>
+				<!-- Cast -->
+				<SpriteAnim name="CastTR" playbackMode="0" >
+					<Sprite id="KnightFCastTR" ppu="16" uv="110,13,126,40" pivot="0.5,0.0" />
+				</SpriteAnim>
+				<SpriteAnim name="CastAL" playbackMode="0" >
+					<Sprite id="KnightFCastAL" ppu="16" uv="110,46,126,72" pivot="0.5,0.0" />
+				</SpriteAnim>
+				<!-- Dead -->
+				<SpriteAnim name="DeadTR" playbackMode="1" >
+					<Sprite id="KnightFDeadTR" ppu="16" uv="9,85,27,104" pivot="0.5,0.5" />
+				</SpriteAnim>
+				<SpriteAnim name="DeadAL" playbackMode="1" >
+					<Sprite id="KnightFDeadAL" ppu="16" uv="10,116,26,135" pivot="0.5,0.5" />
+				</SpriteAnim>
+			</SpriteAnimSet>
+		</IsoSpriteAnimSet>
+	</ActorDefinition>
+	<ActorDefinition name="Mage" >
+		<Stats maxHealth="40" moveSpeed="3" jumpHeight="2" strength="10" actionSpeed="5" height="1" />
+		<Actions>
+			<Wait />
+			<Move />
+			<Attack />
+			<Fire />
+			<Heal />
+		</Actions>
+		<IsoSpriteAnimSet>
+			<SpriteAnimSet spriteSheet="Mage.png" spriteLayout="11,8" fps="10" flipY="true" > <!-- "TR" = TowardsRight, "AL" = AwayLeft -->
+				<!-- Idle -->
+				<SpriteAnim name="IdleTR" playbackMode="1" >	
+					<Sprite id="MageFIdleTR" ppu="16" uv="10,13,26,40" pivot="0.5,0.0" />
+				</SpriteAnim>
+				<SpriteAnim name="IdleAL" playbackMode="1" >
+					<Sprite id="MageFIdleAL" ppu="16" uv="11,45,26,72" pivot="0.5,0.0" />
+				</SpriteAnim>
+				<!-- Walk -->
+				<SpriteAnim name="WalkTR" playbackMode="1" >
+					<Sprite id="MageFWalk0TR" ppu="16" uv="30,12,46,39" pivot="0.5,0.0" />
+					<Sprite id="MageFWalk1TR" ppu="16" uv="51,14,66,38" pivot="0.5,0.0" />
+				</SpriteAnim>
+				<SpriteAnim name="WalkAL" playbackMode="1" >
+					<Sprite id="MageFWalk0AL" ppu="16" uv="31,44,46,70" pivot="0.5,0.0" />
+					<Sprite id="MageFWalk1AL" ppu="16" uv="50,44,66,71" pivot="0.5,0.0" />
+				</SpriteAnim>
+				<!-- Weak -->
+				<SpriteAnim name="WeakTR" playbackMode="1" >
+					<Sprite id="MageFWeakTR" ppu="16" uv="91,14,106,40" pivot="0.5,0.0" />
+				</SpriteAnim>
+				<SpriteAnim name="WeakAL" playbackMode="1" >
+					<Sprite id="MageFWeakAL" ppu="16" uv="91,47,106,72" pivot="0.5,0.0" />
+				</SpriteAnim>
+				<!-- Hit -->
+				<SpriteAnim name="HitTR" playbackMode="0" >
+					<Sprite id="MageFHitTR" ppu="16" uv="70,13,86,40" pivot="0.5,0.0" />
+				</SpriteAnim>
+				<SpriteAnim name="HitAL" playbackMode="0" >
+					<Sprite id="MageFHitAL" ppu="16" uv="71,45,87,72" pivot="0.5,0.0" />
+				</SpriteAnim>
+				<!-- Jump -->
+				<SpriteAnim name="JumpTR" playbackMode="0" >
+					<Sprite id="MageFJumpTR" ppu="16" uv="70,12,86,40" pivot="0.5,0.0" />
+				</SpriteAnim>
+				<SpriteAnim name="JumpAL" playbackMode="0" >
+					<Sprite id="MageFJumpAL" ppu="16" uv="70,44,85,72" pivot="0.5,0.0" />
+				</SpriteAnim>
+				<!-- Crouch -->
+				<SpriteAnim name="CrouchTR" playbackMode="1" >
+					<Sprite id="MageFCrouchTR" ppu="16" uv="131,16,147,40" pivot="0.5,0.0" />
+				</SpriteAnim>
+				<SpriteAnim name="CrouchAL" playbackMode="1" >
+					<Sprite id="MageFCrouchAL" ppu="16" uv="130,48,146,72" pivot="0.5,0.0" />
+				</SpriteAnim>
+				<!-- Attack -->
+				<SpriteAnim name="AttackTR" playbackMode="0" >
+					<Sprite id="MageFAttack0TR" ppu="16" uv="31,75,47,104" pivot="0.5,0.0" />
+					<Sprite id="MageFAttack1TR" ppu="16" uv="50,77,66,104" pivot="0.5,0.0" />
+					<Sprite id="MageFAttack2TR" ppu="16" uv="71,76,87,101" pivot="0.5,0.0" />
+					<Sprite id="MageFAttack3TR" ppu="16" uv="90,76,108,104" pivot="0.5,0.0" />
+					<Sprite id="MageFAttack4TR" ppu="16" uv="110,108,126,136" pivot="0.5,0.0" />
+				</SpriteAnim>
+				<SpriteAnim name="AttackAL" playbackMode="0" >
+					<Sprite id="MageFAttack0AL" ppu="16" uv="30,108,46,136" pivot="0.5,0.0" />
+					<Sprite id="MageFAttack1AL" ppu="16" uv="51,109,67,136" pivot="0.5,0.0" />
+					<Sprite id="MageFAttack2AL" ppu="16" uv="70,107,86,136" pivot="0.5,0.0" />
+					<Sprite id="MageFAttack3AL" ppu="16" uv="89,108,107,136" pivot="0.5,0.0" />
+					<Sprite id="MageFAttack4AL" ppu="16" uv="111,76,127,104" pivot="0.5,0.0" />
+				</SpriteAnim>
+				<!-- Cast -->
+				<SpriteAnim name="CastTR" playbackMode="0" >
+					<Sprite id="MageFCastTR" ppu="16" uv="110,13,125,40" pivot="0.5,0.0" />
+				</SpriteAnim>
+				<SpriteAnim name="CastAL" playbackMode="0" >
+					<Sprite id="MageFCastAL" ppu="16" uv="110,43,126,72" pivot="0.5,0.0" />
+				</SpriteAnim>
+				<!-- Dead -->
+				<SpriteAnim name="DeadTR" playbackMode="1" >
+					<Sprite id="MageFDeadTR" ppu="16" uv="10,84,26,103" pivot="0.5,0.5" />
+				</SpriteAnim>
+				<SpriteAnim name="DeadAL" playbackMode="1" >
+					<Sprite id="MageFDeadAL" ppu="16" uv="11,113,27,135" pivot="0.5,0.5" />
+				</SpriteAnim>
+			</SpriteAnimSet>
+		</IsoSpriteAnimSet>
+	</ActorDefinition>
+</ActorDefinitions>

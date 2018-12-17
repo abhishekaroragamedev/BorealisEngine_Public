@@ -1,0 +1,442 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Shaders>
+<!-- NOTE: All Shaders are Engine-shaders. -->
+	<Shader name="Default" >
+		<ShaderPass usesLights="false" queue="0" layer="0" >
+			<Program fileName="Data/Shaders/Default" />
+			
+			<Blend>
+				<Color operation="Add" source="srcAlpha" destination="oneMinusSrcAlpha" />
+				<Alpha operation="Add" source="one" destination="one" />
+			</Blend>
+			
+			<Depth write="true" />
+
+			<Defaults>
+				<Texture fileName="Data/Images/Texture_Default.png" />
+			</Defaults>
+		</ShaderPass >
+	</Shader>
+	<Shader name="DefaultLit" >
+		<ShaderPass usesLights="true" queue="0" layer="0" >
+			<Program fileName="Data/Shaders/DefaultLit" define="USE_COLOR;USE_DIFFUSE;USE_SPECULAR;USE_EMISSIVE;APPLY_ATTENUATION" />
+			
+			<Blend>
+				<Color operation="Add" source="srcAlpha" destination="oneMinusSrcAlpha" />
+				<Alpha operation="Add" source="one" destination="one" />
+			</Blend>
+			
+			<Depth write="true" />
+
+			<Defaults>
+				<Texture fileName="Data/Images/Texture_Default.png" />
+				<Texture fileName="Data/Images/Texture_Default_Normal.png" />
+				<Texture fileName="Data/Images/Texture_Default_Black.png" />
+				<Texture fileName="Data/Images/Texture_Default_Black.png" />
+				<Texture fileName="Data/Images/Texture_Default_Normal.png" />
+				<Specular amount="0.0" power="1.0" />
+			</Defaults>
+		</ShaderPass >
+	</Shader>
+	<Shader name="DefaultLitDetail" >
+		<ShaderPass usesLights="true" queue="0" layer="0" >
+			<Program fileName="Data/Shaders/DefaultLit" define="USE_COLOR;USE_DIFFUSE;USE_SPECULAR;USE_EMISSIVE;APPLY_ATTENUATION;USE_DETAIL" />
+			
+			<Blend>
+				<Color operation="Add" source="srcAlpha" destination="oneMinusSrcAlpha" />
+				<Alpha operation="Add" source="one" destination="one" />
+			</Blend>
+			
+			<Depth write="true" />
+
+			<Defaults>
+				<Texture fileName="Data/Images/Texture_Default.png" />
+				<Texture fileName="Data/Images/Texture_Default_Normal.png" />
+				<Texture fileName="Data/Images/Texture_Default.png" />
+				<Texture fileName="Data/Images/Texture_Default_Black.png" />
+				<Texture fileName="Data/Images/Texture_Default_Normal.png" />
+				<Specular amount="0.0" power="1.0" />
+			</Defaults>
+		</ShaderPass >
+	</Shader>
+	<Shader name="DefaultLitAlpha" >
+		<ShaderPass usesLights="true" queue="1" layer="0" >
+			<Program fileName="Data/Shaders/DefaultLit" define="USE_COLOR;USE_DIFFUSE;USE_SPECULAR;USE_EMISSIVE;APPLY_ATTENUATION;USE_TEXTURE_ALPHA" />
+			
+			<Blend>
+				<Color operation="Add" source="srcAlpha" destination="oneMinusSrcAlpha" />
+				<Alpha operation="Add" source="one" destination="one" />
+			</Blend>
+			
+			<Depth write="false" />
+
+			<Defaults>
+				<Texture fileName="Data/Images/Texture_Default.png" />
+				<Texture fileName="Data/Images/Texture_Default_Normal.png" />
+				<Texture fileName="Data/Images/Texture_Default_Black.png" />
+				<Specular amount="0.0" power="1.0" />
+			</Defaults>
+		</ShaderPass >
+	</Shader>
+	<Shader name="DefaultUI" >
+		<ShaderPass usesLights="false" queue="0" layer="0" >
+			<Program fileName="Data/Shaders/DefaultUI" />
+			
+			<Blend>
+				<Color operation="Add" source="srcAlpha" destination="oneMinusSrcAlpha" />
+				<Alpha operation="Add" source="one" destination="one" />
+			</Blend>
+			
+			<Depth compare="Always" write="false" />
+
+			<Defaults>
+				<Texture fileName="Data/Images/Texture_Default.png" />
+			</Defaults>
+		</ShaderPass >
+	</Shader>
+	<Shader name="LitColor" >
+		<ShaderPass usesLights="true" queue="0" layer="0" >
+			<Program fileName="Data/Shaders/DefaultLit" define="USE_COLOR" />
+			
+			<Blend>
+				<Color operation="Add" source="srcAlpha" destination="oneMinusSrcAlpha" />
+				<Alpha operation="Add" source="one" destination="one" />
+			</Blend>
+			
+			<Depth write="true" /> 
+			
+			<Defaults>
+				<Texture fileName="Data/Images/Texture_Default.png" />
+				<Texture fileName="Data/Images/Texture_Default_Normal.png" />
+				<Texture fileName="Data/Images/Texture_Default_Black.png" />
+				<Specular amount="0.0" power="1.0" />
+			</Defaults>
+		</ShaderPass >
+	</Shader>
+	<Shader name="LitDiffuse" >
+		<ShaderPass usesLights="true" queue="0" layer="0" >
+			<Program fileName="Data/Shaders/DefaultLit" define="USE_DIFFUSE;APPLY_ATTENUATION" />
+			
+			<Blend>
+				<Color operation="Add" source="srcAlpha" destination="oneMinusSrcAlpha" />
+				<Alpha operation="Add" source="one" destination="one" />
+			</Blend>
+			
+			<Depth write="true" />
+			
+			<Defaults>
+				<Texture fileName="Data/Images/Texture_Default.png" />
+				<Texture fileName="Data/Images/Texture_Default_Normal.png" />
+				<Texture fileName="Data/Images/Texture_Default_Black.png" />
+				<Specular amount="0.0" power="1.0" />
+			</Defaults>
+		</ShaderPass >
+	</Shader>
+	<Shader name="LitSpecular" >
+		<ShaderPass usesLights="true" queue="0" layer="0" >
+			<Program fileName="Data/Shaders/DefaultLit" define="USE_SPECULAR;APPLY_ATTENUATION" />
+			
+			<Blend>
+				<Color operation="Add" source="srcAlpha" destination="oneMinusSrcAlpha" />
+				<Alpha operation="Add" source="one" destination="one" />
+			</Blend>
+			
+			<Depth write="true" />
+			
+			<Defaults>
+				<Texture fileName="Data/Images/Texture_Default.png" />
+				<Texture fileName="Data/Images/Texture_Default_Normal.png" />
+				<Texture fileName="Data/Images/Texture_Default_Black.png" />
+				<Specular amount="0.0" power="1.0" />
+			</Defaults>
+		</ShaderPass >
+	</Shader>
+	<Shader name="LitEmissive" >
+		<ShaderPass usesLights="true" queue="0" layer="0" >
+			<Program fileName="Data/Shaders/DefaultLit" define="USE_EMISSIVE;APPLY_ATTENUATION" />
+			
+			<Blend>
+				<Color operation="Add" source="srcAlpha" destination="oneMinusSrcAlpha" />
+				<Alpha operation="Add" source="one" destination="one" />
+			</Blend>
+			
+			<Depth write="true" />
+			
+			<Defaults>
+				<Texture fileName="Data/Images/Texture_Default.png" />
+				<Texture fileName="Data/Images/Texture_Default_Normal.png" />
+				<Texture fileName="Data/Images/Texture_Default_Black.png" />
+				<Specular amount="0.0" power="1.0" />
+			</Defaults>
+		</ShaderPass >
+	</Shader>
+	<Shader name="LitDiffuseSpecular" >
+		<ShaderPass usesLights="true" queue="0" layer="0" >
+			<Program fileName="Data/Shaders/DefaultLit" define="USE_DIFFUSE;USE_SPECULAR;APPLY_ATTENUATION" />
+			
+			<Blend>
+				<Color operation="Add" source="srcAlpha" destination="oneMinusSrcAlpha" />
+				<Alpha operation="Add" source="one" destination="one" />
+			</Blend>
+			
+			<Depth write="true" />
+			
+			<Defaults>
+				<Texture fileName="Data/Images/Texture_Default.png" />
+				<Texture fileName="Data/Images/Texture_Default_Normal.png" />
+				<Texture fileName="Data/Images/Texture_Default_Black.png" />
+				<Specular amount="0.0" power="1.0" />
+			</Defaults>
+		</ShaderPass >
+	</Shader>
+	<Shader name="UV" >
+		<ShaderPass queue="0" layer="0" >
+			<Program fileName="Data/Shaders/UV" />
+			
+			<Blend>
+				<Color operation="Add" source="srcAlpha" destination="oneMinusSrcAlpha" />
+				<Alpha operation="Add" source="one" destination="one" />
+			</Blend>
+			
+			<Depth write="true" />
+		</ShaderPass >
+	</Shader>
+	<Shader name="LitSurfaceNormalDebug" >
+		<ShaderPass queue="0" layer="0" >
+			<Program fileName="Data/Shaders/LitNormalDebug" define="SURFACE_NORMAL" />
+			
+			<Blend>
+				<Color operation="Add" source="srcAlpha" destination="oneMinusSrcAlpha" />
+				<Alpha operation="Add" source="one" destination="one" />
+			</Blend>
+			
+			<Depth write="true" />
+		</ShaderPass >
+	</Shader>
+	<Shader name="LitWorldNormalDebug" >
+		<ShaderPass queue="0" layer="0" >
+			<Program fileName="Data/Shaders/LitNormalDebug" define="SURFACE_NORMAL;WORLD_NORMAL" />
+			
+			<Blend>
+				<Color operation="Add" source="srcAlpha" destination="oneMinusSrcAlpha" />
+				<Alpha operation="Add" source="one" destination="one" />
+			</Blend>
+			
+			<Depth write="true" />
+		</ShaderPass >
+	</Shader>
+	<Shader name="LitNormalDebug" >
+		<ShaderPass queue="0" layer="0" >
+			<Program fileName="Data/Shaders/LitNormalDebug" define="VERTEX_NORMAL" />
+			
+			<Blend>
+				<Color operation="Add" source="srcAlpha" destination="oneMinusSrcAlpha" />
+				<Alpha operation="Add" source="one" destination="one" />
+			</Blend>
+			
+			<Depth write="true" />
+		</ShaderPass >
+	</Shader>
+	<Shader name="LitTangentDebug" >
+		<ShaderPass queue="0" layer="0" >
+			<Program fileName="Data/Shaders/LitNormalDebug" define="VERTEX_TANGENT" />
+			
+			<Blend>
+				<Color operation="Add" source="srcAlpha" destination="oneMinusSrcAlpha" />
+				<Alpha operation="Add" source="one" destination="one" />
+			</Blend>
+			
+			<Depth write="true" />
+		</ShaderPass >
+	</Shader>
+	<Shader name="LitBitangentDebug" >
+		<ShaderPass name="LitBitangentDebug" queue="0" layer="0" >
+			<Program fileName="Data/Shaders/LitNormalDebug" define="VERTEX_BITANGENT" />
+			
+			<Blend>
+				<Color operation="Add" source="srcAlpha" destination="oneMinusSrcAlpha" />
+				<Alpha operation="Add" source="one" destination="one" />
+			</Blend>
+			
+			<Depth write="true" />
+		</ShaderPass >
+	</Shader>
+	<Shader name="DebugRenderSolid" >
+		<ShaderPass queue="0" layer="0" fill="Solid" >
+			<Program fileName="Data/Shaders/DebugRender" />
+			
+			<Blend>
+				<Color operation="Add" source="srcAlpha" destination="oneMinusSrcAlpha" />
+				<Alpha operation="Add" source="one" destination="one" />
+			</Blend>
+			
+			<Depth write="true" />
+
+			<Defaults>
+				<Texture fileName="Data/Images/Texture_Default.png" />
+				
+				<Vec4 name="STARTCOLOR" defaultValue="1.0,1.0,1.0,1.0" />
+				<Vec4 name="ENDCOLOR" defaultValue="1.0,1.0,1.0,1.0" />
+				<Float name="TIMENORMALIZED" defaultValue="0.0" />
+			</Defaults>
+		</ShaderPass >
+	</Shader>
+	<Shader name="DebugRenderWireframe" >
+		<ShaderPass queue="0" layer="0" fill="Wire" >
+			<Program fileName="Data/Shaders/DebugRender" />
+			
+			<Blend>
+				<Color operation="Add" source="srcAlpha" destination="oneMinusSrcAlpha" />
+				<Alpha operation="Add" source="one" destination="one" />
+			</Blend>
+			
+			<Depth write="true" />
+
+			<Defaults>
+				<Texture fileName="Data/Images/Texture_Default.png" />
+				
+				<Vec4 name="STARTCOLOR" defaultValue="1.0,1.0,1.0,1.0" />
+				<Vec4 name="ENDCOLOR" defaultValue="1.0,1.0,1.0,1.0" />
+				<Float name="TIMENORMALIZED" defaultValue="0.0" />
+			</Defaults>
+		</ShaderPass >
+	</Shader>
+	<Shader name="Fullscreen" >
+		<ShaderPass usesLights="true" queue="0" layer="0" >
+			<Program fileName="Data/Shaders/FullscreenPassThrough" />
+			
+			<Blend>
+				<Color operation="Add" source="srcAlpha" destination="oneMinusSrcAlpha" />
+				<Alpha operation="Add" source="one" destination="one" />
+			</Blend>
+			
+			<Depth compare="Always" write="false" />
+
+			<Defaults>
+				<Texture fileName="Data/Images/Texture_Default.png" />
+			</Defaults>
+		</ShaderPass >
+	</Shader>
+	<Shader name="Additive" >
+		<ShaderPass queue="1" layer="0" >
+			<Program fileName="Data/Shaders/AdditiveFlat" />
+			
+			<Blend>
+				<Color operation="Add" source="srcAlpha" destination="one" />
+				<Alpha operation="Add" source="one" destination="one" />
+			</Blend>
+			
+			<Defaults>
+				<Texture fileName="Data/Images/Texture_Default.png" />
+			</Defaults>
+			
+			<Depth write="false" />
+		</ShaderPass >
+	</Shader>
+	<Shader name="Skybox" >
+		<ShaderPass queue="0" layer="0" cull="Front" >
+			<Program fileName="Data/Shaders/Skybox" />
+			
+			<Blend>
+				<Color operation="Add" source="srcAlpha" destination="oneMinusSrcAlpha" />
+				<Alpha operation="Add" source="one" destination="one" />
+			</Blend>
+			
+			<Depth compare="Always" write="false" />
+		</ShaderPass >
+	</Shader>
+	<Shader name="Bloom" >
+		<ShaderPass queue="0" layer="0" >
+			<Program fileName="Data/Shaders/BloomBlur" define="BLUR_X" />
+			
+			<Blend>
+				<Color operation="Add" source="srcAlpha" destination="oneMinusSrcAlpha" />
+				<Alpha operation="Add" source="one" destination="one" />
+			</Blend>
+			
+			<Depth compare="Always" write="false" />
+			
+			<Defaults>
+				<Texture fileName="Data/Images/Texture_Default.png" />
+				<Texture fileName="Data/Images/Texture_Default_Normal.png" />
+			</Defaults>
+		</ShaderPass >
+		<ShaderPass queue="0" layer="0" >
+			<Program fileName="Data/Shaders/BloomBlur" define="BLUR_Y" />
+			
+			<Blend>
+				<Color operation="Add" source="srcAlpha" destination="oneMinusSrcAlpha" />
+				<Alpha operation="Add" source="one" destination="one" />
+			</Blend>
+			
+			<Depth compare="Always" write="false" />
+			
+			<Defaults>
+				<Texture fileName="Data/Images/Texture_Default.png" />
+				<Texture fileName="Data/Images/Texture_Default_Normal.png" />
+			</Defaults>
+		</ShaderPass >
+	</Shader>
+	<Shader name="OculusVRFlipY" >
+		<ShaderPass queue="0" layer="0" >
+			<Program fileName="Data/Shaders/OculusVRFlipY" />
+			
+			<Blend>
+				<Color operation="Add" source="srcAlpha" destination="oneMinusSrcAlpha" />
+				<Alpha operation="Add" source="one" destination="one" />
+			</Blend>
+			
+			<Depth compare="Always" write="false" />
+			
+			<Defaults>
+				<Texture fileName="Data/Images/Texture_Default.png" />
+			</Defaults>
+		</ShaderPass >
+	</Shader>
+	<Shader name="MotionBlur" >
+		<ShaderPass queue="0" layer="0" >
+			<Program fileName="Data/Shaders/MotionBlur" define="BLUR_X" />
+			
+			<Blend>
+				<Color operation="Add" source="srcAlpha" destination="oneMinusSrcAlpha" />
+				<Alpha operation="Add" source="one" destination="one" />
+			</Blend>
+			
+			<Depth compare="Always" write="false" />
+			
+			<Defaults>
+				<Texture fileName="Data/Images/Texture_Default.png" />
+				
+				<Float name="BLUR_FACTOR" defaultValue="0.0" />
+			</Defaults>
+		</ShaderPass >
+		<ShaderPass queue="0" layer="0" >
+			<Program fileName="Data/Shaders/MotionBlur" define="BLUR_Y" />
+			
+			<Blend>
+				<Color operation="Add" source="srcAlpha" destination="oneMinusSrcAlpha" />
+				<Alpha operation="Add" source="one" destination="one" />
+			</Blend>
+			
+			<Depth compare="Always" write="false" />
+			
+			<Defaults>
+				<Texture fileName="Data/Images/Texture_Default.png" />
+				
+				<Float name="BLUR_FACTOR" defaultValue="0.0" />
+			</Defaults>
+		</ShaderPass >
+	</Shader>
+	<Shader name="ShadowMap" >
+		<ShaderPass queue="0" layer="0" >
+			<Program fileName="Data/Shaders/ShadowMap" />
+			
+			<Blend>
+				<Color operation="Add" source="srcAlpha" destination="oneMinusSrcAlpha" />
+				<Alpha operation="Add" source="one" destination="one" />
+			</Blend>
+			
+			<Depth write="true" />
+		</ShaderPass >
+	</Shader>
+</Shaders>
