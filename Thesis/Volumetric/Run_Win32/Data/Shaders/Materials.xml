@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Materials>
+<!-- Engine Materials -->
+	<Material name="UI" shader="DefaultUI" />
+	<Material name="Fullscreen" shader="Fullscreen" />
+	<Material name="FullscreenDepth" shader="FullscreenDepth" />
+	<Material name="Bloom" shader="Bloom">
+		<Texture fileName="Data/Images/Texture_Default.png" />
+		<Texture fileName="Data/Images/Texture_Default_Normal.png" />
+	</Material>
+	<Material name="MotionBlur" shader="MotionBlur">
+		<Texture fileName="Data/Images/Texture_Default.png" />
+		
+		<Float name="BLUR_FACTOR" defaultValue="0.0" />
+	</Material>
+	<Material name="MotionBlur" shader="MotionBlur">
+		<Texture fileName="Data/Images/Texture_Default.png" />
+		
+		<Float name="BLUR_FACTOR" defaultValue="0.0" />
+	</Material>
+	<Material name="ShadowMap" shader="ShadowMap" />
+<!-- Game-specific Materials -->
+	<Material name="Light" shader="Light" >
+		<Texture fileName="Data/Images/Texture_Default.png" mip="1" />
+		<Vec4 name="LIGHTCOLORANDINTENSITY" defaultValue="1.0,1.0,1.0,1.0" />
+		<Float name="LIGHTRADIUS" defaultValue="1.0" />
+		<Specular amount="0.1" power="5.0" />
+	</Material>
+	<Material name="Sky" shader="Sky">
+    <Float name="SUNLIGHT_INTENSITY" defaultValue="1.0" />
+    <Float name="TERRAIN_HEIGHT" defaultValue="1000.0" />
+    <Float name="ATMOSPHERE_LAYER_ALTITUDE" defaultValue="1100.0" />
+    <Float name="ATMOSPHERE_LAYER_HEIGHT" defaultValue="25.0" />
+    <Float name="MIE_PHASE_FUNCTION_MAX_VALUE" defaultValue="1.0" />
+  </Material>
+	<Material name="Volumetric" shader="VolumetricClouds" >
+		<Float name="RAYMARCH_OFFSET_FRACTION" defaultValue="1.0" />
+		<Float name="TERRAIN_HEIGHT" defaultValue="1000.0" />
+		<Float name="CLOUD_LAYER_ALTITUDE" defaultValue="1100.0" />
+		<Float name="CLOUD_LAYER_HEIGHT" defaultValue="25.0" />
+		<Float name="SHADOWS_ENABLED" defaultValue="1.0" />
+    <Float name="TEMPORAL_UPSAMPLING_ENABLED" defaultValue="1.0" />
+		<Float name="WEATHER_TEXTURE_TILE_FACTOR" defaultValue="1.0" />
+		<Float name="SHAPE_TEXTURE_TILE_FACTOR" defaultValue="1.0" />
+		<Float name="DETAIL_TEXTURE_TILE_FACTOR" defaultValue="1.0" />
+    <Float name="DETAIL_TEXTURE_PANNING" defaultValue="1.0" />
+    <Float name="DETAIL_TEXTURE_OFFSET" defaultValue="1.0" />
+		<Float name="SHAPE_WORLEY_INVERSE" defaultValue="0.0" />
+		<Float name="DETAIL_WORLEY_INVERSE" defaultValue="0.0" />
+		<Float name="MAX_DENSITY" defaultValue="1.0" />
+    <Float name="SUNLIGHT_INTENSITY" defaultValue="20.0" />
+    <Float name="MIE_PHASE_FUNCTION_MAX_VALUE" defaultValue="1.0" />
+    <Float name="DEBUG_VIEW_LODS" defaultValue="0.0" />
+	</Material>
+  <Material name="CloudsFullscreen" shader="CloudsFullscreen" />
+  <Material name="GodRays" shader="GodRays" />
+	<Material name="2DWeatherTextureDebug" shader="2DWeatherTextureDebug" >
+		<Vec4 name="CHANNEL_MASK" defaultValue="1.0,1.0,1.0,0.0" />
+		<Float name="UV_OFFSET" defaultValue="0.0" />
+	</Material>
+	<Material name="3DTexLayer" shader="3DTexLayer" >
+		<Float name="NUM_LAYERS" defaultValue="32.0" />
+		<Float name="LAYER_MASK" defaultValue="0.0" />
+		<Vec4 name="CHANNEL_MASK" defaultValue="1.0,0.0,0.0,0.0" />
+	</Material>
+	<Material name="Ship" shader="DefaultStoreNormals" >
+		<Texture fileName="Data/Models/SciFiFighter/SciFi_Fighter-MK6-diffuse.jpg" />
+		<Texture fileName="Data/Models/SciFiFighter/SciFi_Fighter-MK6-normal.png" />
+		<Texture fileName="Data/Models/SciFiFighter/SciFi_Fighter-MK6-spec.jpg" />
+		<Texture fileName="Data/Models/SciFiFighter/SciFi_Fighter-MK6-lights.jpg" />
+		<Specular amount="0.75" power="12.0" />
+	</Material>
+	<Material name="Terrain" shader="DefaultStoreNormals" >
+		<Texture fileName="Data/Images/Grass_Diffuse.jpg" mip="8" />
+		<Texture fileName="Data/Images/Grass_Normal.jpg" mip="8" />
+    <Texture fileName="Data/Images/Texture_Default_Black.png" />
+    <Texture fileName="Data/Images/Texture_Default_Black.png" />
+    <Specular amount="0.0" power="1.0" />
+	</Material>
+</Materials>

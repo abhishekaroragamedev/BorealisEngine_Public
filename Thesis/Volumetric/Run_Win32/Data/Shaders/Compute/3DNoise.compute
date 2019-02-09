@@ -1,0 +1,383 @@
+#version 430
+
+#include "../MathUtils/RangeMap.glsl"
+
+#define EPSILON 0.000000001f
+#define ROOT_THREE_BY_THREE 0.5773502691896257645091f
+
+/* INPUT-OUTPUT */
+layout ( binding = 0, rgba8 ) uniform image3D noiseTex;
+layout ( local_size_x = 1, local_size_y = 1, local_size_z = 1 ) in;
+
+/* HELPERS */
+// NOTE: From Squirrel's "RawNoise.cpp"
+uint Get1dNoiseUint( int positionX, uint seed )
+{
+	const uint BIT_NOISE1 = 0xD2A80A23; // 0b1101'0010'1010'1000'0000'1010'0010'0011;
+	const uint BIT_NOISE2 = 0xA884F197; // 0b1010'1000'1000'0100'1111'0001'1001'0111;
+	const uint BIT_NOISE3 = 0x1B56C4E9; // 0b0001'1011'0101'0110'1100'0100'1110'1001;
+
+	uint mangledBits = uint(positionX);
+	mangledBits *= BIT_NOISE1;
+	mangledBits += seed;
+	mangledBits ^= (mangledBits >> 7);
+	mangledBits += BIT_NOISE2;
+	mangledBits ^= (mangledBits >> 8);
+	mangledBits *= BIT_NOISE3;
+	mangledBits ^= (mangledBits >> 11);
+	return mangledBits;
+}
+
+// NOTE: From Squirrel's "RawNoise.hpp"
+uint Get3dNoiseUint( int indexX, int indexY, int indexZ, uint seed )
+{
+	const int PRIME1 = 198491317; // Large prime number with non-boring bits
+	const int PRIME2 = 6542989; // Large prime number with distinct and non-boring bits
+	return Get1dNoiseUint( indexX + (PRIME1 * indexY) + (PRIME2 * indexZ), seed );
+}
+
+// NOTE: From Squirrel's "SmoothNoise.cpp"
+float Perlin3D( float posX, float posY, float posZ, float scaleX/* =1.f */, float scaleY/* =1.f */, float scaleZ/* =1.f */, uint numOctaves/* =1 */, float octavePersistence/* =0.5f */, float octaveScale/* =2.f */, bool renormalize/* =true */, uint seed/* =0 */ )
+{
+	const float OCTAVE_OFFSET = 0.636764989593174f; // Translation/bias to add to each octave
+
+	vec3 gradients[ 8 ]; // Traditional "12 edges" requires modulus and isn't any better.
+	gradients[ 0 ] = vec3( +ROOT_THREE_BY_THREE, +ROOT_THREE_BY_THREE, +ROOT_THREE_BY_THREE ); // Normalized unit 3D vectors
+	gradients[ 1 ] = vec3( -ROOT_THREE_BY_THREE, +ROOT_THREE_BY_THREE, +ROOT_THREE_BY_THREE ); //  pointing toward cube
+	gradients[ 2 ] = vec3( +ROOT_THREE_BY_THREE, -ROOT_THREE_BY_THREE, +ROOT_THREE_BY_THREE ); //  corners, so components
+	gradients[ 3 ] = vec3( -ROOT_THREE_BY_THREE, -ROOT_THREE_BY_THREE, +ROOT_THREE_BY_THREE ); //  are all sqrt(3)/3, i.e.
+	gradients[ 4 ] = vec3( +ROOT_THREE_BY_THREE, +ROOT_THREE_BY_THREE, -ROOT_THREE_BY_THREE ); // 0.5773502691896257645091f.
+	gradients[ 5 ] = vec3( -ROOT_THREE_BY_THREE, +ROOT_THREE_BY_THREE, -ROOT_THREE_BY_THREE ); // These are slightly better
+	gradients[ 6 ] = vec3( +ROOT_THREE_BY_THREE, -ROOT_THREE_BY_THREE, -ROOT_THREE_BY_THREE ); // than axes (1,0,0) and much
+	gradients[ 7 ] = vec3( -ROOT_THREE_BY_THREE, -ROOT_THREE_BY_THREE, -ROOT_THREE_BY_THREE ); // faster than edges (1,1,0).
+
+	float totalNoise = 0.0f;
+	float totalAmplitude = 0.0f;
+	float currentAmplitude = 1.0f;
+	vec3 currentPos = vec3( posX / scaleX, posY / scaleY, posZ / scaleZ );
+	vec3 currentScale = vec3( 1.0f, 1.0f, 1.0f );
+
+	for( uint octaveNum = 0; octaveNum < numOctaves; octaveNum++ )
+	{
+		// Determine random unit "gradient vectors" for surrounding corners
+		vec3 cellMins = vec3( floor( currentPos.x ), floor( currentPos.y ), floor( currentPos.z ) );
+
+		int indexWestX  = int(cellMins.x);
+		int indexSouthY = int(cellMins.y);
+		int indexBelowZ = int(cellMins.z);
+		int indexEastX  = ( indexWestX  + 1 ) % int( currentScale.x );
+		int indexNorthY = ( indexSouthY + 1 ) % int( currentScale.y );
+		int indexAboveZ = ( indexBelowZ + 1 ) % int( currentScale.z );
+
+		uint noiseBelowSW = Get3dNoiseUint( indexWestX, indexSouthY, indexBelowZ, seed );
+		uint noiseBelowSE = Get3dNoiseUint( indexEastX, indexSouthY, indexBelowZ, seed );
+		uint noiseBelowNW = Get3dNoiseUint( indexWestX, indexNorthY, indexBelowZ, seed );
+		uint noiseBelowNE = Get3dNoiseUint( indexEastX, indexNorthY, indexBelowZ, seed );
+		uint noiseAboveSW = Get3dNoiseUint( indexWestX, indexSouthY, indexAboveZ, seed );
+		uint noiseAboveSE = Get3dNoiseUint( indexEastX, indexSouthY, indexAboveZ, seed );
+		uint noiseAboveNW = Get3dNoiseUint( indexWestX, indexNorthY, indexAboveZ, seed );
+		uint noiseAboveNE = Get3dNoiseUint( indexEastX, indexNorthY, indexAboveZ, seed );
+
+		vec3 gradientBelowSW = gradients[ noiseBelowSW & 0x00000007 ];
+		vec3 gradientBelowSE = gradients[ noiseBelowSE & 0x00000007 ];
+		vec3 gradientBelowNW = gradients[ noiseBelowNW & 0x00000007 ];
+		vec3 gradientBelowNE = gradients[ noiseBelowNE & 0x00000007 ];
+		vec3 gradientAboveSW = gradients[ noiseAboveSW & 0x00000007 ];
+		vec3 gradientAboveSE = gradients[ noiseAboveSE & 0x00000007 ];
+		vec3 gradientAboveNW = gradients[ noiseAboveNW & 0x00000007 ];
+		vec3 gradientAboveNE = gradients[ noiseAboveNE & 0x00000007 ];
+
+		vec3 cellMaxs = vec3( cellMins.x + 1.0f, cellMins.y + 1.0f, cellMins.z + 1.0f );
+		// Dot each corner's gradient with displacement from corner to position
+		vec3 displacementFromBelowSW = vec3( currentPos.x - cellMins.x, currentPos.y - cellMins.y, currentPos.z - cellMins.z );
+		vec3 displacementFromBelowSE = vec3( currentPos.x - cellMaxs.x, currentPos.y - cellMins.y, currentPos.z - cellMins.z );
+		vec3 displacementFromBelowNW = vec3( currentPos.x - cellMins.x, currentPos.y - cellMaxs.y, currentPos.z - cellMins.z );
+		vec3 displacementFromBelowNE = vec3( currentPos.x - cellMaxs.x, currentPos.y - cellMaxs.y, currentPos.z - cellMins.z );
+		vec3 displacementFromAboveSW = vec3( currentPos.x - cellMins.x, currentPos.y - cellMins.y, currentPos.z - cellMaxs.z );
+		vec3 displacementFromAboveSE = vec3( currentPos.x - cellMaxs.x, currentPos.y - cellMins.y, currentPos.z - cellMaxs.z );
+		vec3 displacementFromAboveNW = vec3( currentPos.x - cellMins.x, currentPos.y - cellMaxs.y, currentPos.z - cellMaxs.z );
+		vec3 displacementFromAboveNE = vec3( currentPos.x - cellMaxs.x, currentPos.y - cellMaxs.y, currentPos.z - cellMaxs.z );
+
+		float dotBelowSW = dot( gradientBelowSW, displacementFromBelowSW );
+		float dotBelowSE = dot( gradientBelowSE, displacementFromBelowSE );
+		float dotBelowNW = dot( gradientBelowNW, displacementFromBelowNW );
+		float dotBelowNE = dot( gradientBelowNE, displacementFromBelowNE );
+		float dotAboveSW = dot( gradientAboveSW, displacementFromAboveSW );
+		float dotAboveSE = dot( gradientAboveSE, displacementFromAboveSE );
+		float dotAboveNW = dot( gradientAboveNW, displacementFromAboveNW );
+		float dotAboveNE = dot( gradientAboveNE, displacementFromAboveNE );
+
+		// Do a smoothed (nonlinear) weighted average of dot results
+		float weightEast  = smoothstep( 0.0f, 1.0f, displacementFromBelowSW.x );
+		float weightNorth = smoothstep( 0.0f, 1.0f, displacementFromBelowSW.y );
+		float weightAbove = smoothstep( 0.0f, 1.0f, displacementFromBelowSW.z );
+		float weightWest  = 1.0f - weightEast;
+		float weightSouth = 1.0f - weightNorth;
+		float weightBelow = 1.0f - weightAbove;
+
+		// 8-way blend (8 -> 4 -> 2 -> 1)
+		float blendBelowSouth = (weightEast * dotBelowSE) + (weightWest * dotBelowSW);
+		float blendBelowNorth = (weightEast * dotBelowNE) + (weightWest * dotBelowNW);
+		float blendAboveSouth = (weightEast * dotAboveSE) + (weightWest * dotAboveSW);
+		float blendAboveNorth = (weightEast * dotAboveNE) + (weightWest * dotAboveNW);
+		float blendBelow = (weightSouth * blendBelowSouth) + (weightNorth * blendBelowNorth);
+		float blendAbove = (weightSouth * blendAboveSouth) + (weightNorth * blendAboveNorth);
+		float blendTotal = (weightBelow * blendBelow) + (weightAbove * blendAbove);
+		float noiseThisOctave = blendTotal * (1.0f / 0.793856621f); // 3D Perlin is in [-.793856621,.793856621]; map to ~[-1,1]
+		
+																	// Accumulate results and prepare for next octave (if any)
+		totalNoise += noiseThisOctave * currentAmplitude;
+		totalAmplitude += currentAmplitude;
+		currentAmplitude *= octavePersistence;
+
+		currentPos *= octaveScale;
+		currentScale *= octaveScale;
+
+		currentPos.x += OCTAVE_OFFSET; // Add "irrational" offset to de-align octave grids
+		currentPos.y += OCTAVE_OFFSET; // Add "irrational" offset to de-align octave grids
+		currentPos.z += OCTAVE_OFFSET; // Add "irrational" offset to de-align octave grids
+		if ( currentPos.x >= currentScale.x )	{ currentPos.x -= currentScale.x; }
+		if ( currentPos.y >= currentScale.y )	{ currentPos.y -= currentScale.y; }
+		if ( currentPos.z >= currentScale.z )	{ currentPos.z -= currentScale.z; }
+
+		++ seed; // Eliminates octaves "echoing" each other (since each octave is uniquely seeded)
+	}
+
+	// Re-normalize total noise to within [-1,1] and fix octaves pulling us far away from limits
+	if( renormalize && totalAmplitude > 0.0f )
+	{
+		totalNoise /= totalAmplitude;				// Amplitude exceeds 1.0 if octaves are used
+		totalNoise = (totalNoise * 0.5f) + 0.5f;	// Map to [0,1]
+		totalNoise = smoothstep( 0.0f, 1.0f, totalNoise );		// Push towards extents (octaves pull us away)
+		totalNoise = (totalNoise * 2.0f) - 1.0f;		// Map back to [-1,1]
+	}
+
+	return totalNoise;
+}
+
+// From Spatial's answer at https://stackoverflow.com/questions/4200224/random-noise-functions-for-glsl
+float floatConstruct( uint randomUint ) {
+	const uint ieeeMantissa = 0x007FFFFFu;
+	const uint ieeeOne      = 0x3F800000u;
+
+	randomUint &= ieeeMantissa;
+	randomUint |= ieeeOne;
+
+	float  f = uintBitsToFloat( randomUint );
+	return f - 1.0;
+}
+
+float Worley3D( float posX, float posY, float posZ, float scaleX, float scaleY, float scaleZ, float octavesX, float octavesY, float octavesZ, uint seed )
+{
+	ivec3 numCells = ivec3( int(octavesX), int(octavesY), int(octavesZ) );
+
+	vec3 cellWidth;
+	cellWidth.x = 1.0f / octavesX;
+	cellWidth.y = 1.0f / octavesY;
+	cellWidth.z = 1.0f / octavesZ;
+
+	vec3 dimWidth;
+	dimWidth.x = 1.0f / scaleX;
+	dimWidth.y = 1.0f / scaleY;
+	dimWidth.z = 1.0f / scaleZ;
+
+	vec3 currentPoint = vec3(
+		( posX * dimWidth.x ),
+		( posY * dimWidth.y ),
+		( posZ * dimWidth.z )
+	);
+
+	ivec3 cellIndex = ivec3(currentPoint / cellWidth);
+
+	// Get the neighboring cells for the point
+	int back = cellIndex.z - 1;
+	if ( back < 0 )
+	{
+		back = numCells.z - 1;
+	}
+	int left = cellIndex.x - 1;
+	if ( left < 0 )
+	{
+		left = numCells.x - 1;
+	}
+	int bottom = cellIndex.y - 1;
+	if ( bottom < 0 )
+	{
+		bottom = numCells.y - 1;
+	}
+
+	float minDistance = 9999999.0f;
+	ivec3 numIterations = ivec3( 3, 3, 3 );	// Check 27 closest cells
+	for ( int nK = back; numIterations.z > 0; nK = ( nK + 1 ) % numCells.z )
+	{
+		numIterations.z--;
+		numIterations.x = 3;
+
+		vec3 hasWrapped = vec3(0.0f);
+		if ( ( nK + 1 >= numCells.z && numIterations.z == 2 ) || ( nK - 1 < 0 && numIterations.z == 0 ) )
+		{
+			hasWrapped.z = 1.0f;
+		}
+
+		for ( int nI = left; numIterations.x > 0; nI = ( nI + 1 ) % numCells.x )
+		{
+			numIterations.x--;
+			numIterations.y = 3;
+
+			hasWrapped.x = 0.0f;
+			if ( ( nI + 1 >= numCells.x && numIterations.x == 2 ) || ( nI - 1 < 0 && numIterations.x == 0 ) )
+			{
+				hasWrapped.x = 1.0f;
+			}
+
+			for ( int nJ = bottom; numIterations.y > 0; nJ = ( nJ + 1 ) % numCells.y )
+			{
+				numIterations.y--;
+
+				hasWrapped.y = 0.0f;
+				if ( ( nJ + 1 >= numCells.y && numIterations.y == 2 ) || ( nJ - 1 < 0 && numIterations.y == 0 ) )
+				{
+					hasWrapped.y = 1.0f;
+				}
+
+				uint noiseUX = Get3dNoiseUint( nI, nJ, nK, seed );
+				uint noiseUY = Get3dNoiseUint( nJ, nK, nI, seed );
+				uint noiseUZ = Get3dNoiseUint( nK, nI, nJ, seed );
+				float noiseX = floatConstruct( noiseUX );
+				float noiseY = floatConstruct( noiseUY );
+				float noiseZ = floatConstruct( noiseUZ );
+				vec3 featurePoint = vec3(
+					(float(nI) * cellWidth.x) + (noiseX * cellWidth.x),
+					(float(nJ) * cellWidth.y) + (noiseY * cellWidth.y),
+					(float(nK) * cellWidth.z) + (noiseZ * cellWidth.z)
+				);
+
+				vec3 displacement = featurePoint - currentPoint;
+				// "Wrap around" the displacements for any dimensions that crossed boundaries this iteration - otherwise, boundary crosses will have unfairly large distances and never compete with minDistance
+				displacement.x -= sign( displacement.x ) * hasWrapped.x;
+				displacement.y -= sign( displacement.y ) * hasWrapped.y;
+				displacement.z -= sign( displacement.z ) * hasWrapped.z;
+
+				float distanceSquared = dot(displacement, displacement);
+				distanceSquared = clamp( distanceSquared, 0.0f, 1.0f );
+				
+				minDistance = min(minDistance, distanceSquared);
+			}
+		}
+	}
+	minDistance = sqrt( minDistance );
+	minDistance *= octavesX * 0.5f;	// Based on trial and error; this most accurately maps to the CPU version's maxDistance, which cannot be computed here owing to work groups not being able to share data
+	minDistance = clamp(minDistance, 0.0f, 1.0f);
+
+	return minDistance;
+}
+
+/* MAIN */
+void main()
+{
+	ivec3 storePos = ivec3( gl_GlobalInvocationID );
+	vec4 color = imageLoad( noiseTex, storePos );
+
+	if ( gl_NumWorkGroups.x == 128 )	// Shape texture
+	{
+		float perlin = Perlin3D(
+			float( gl_GlobalInvocationID.x ),
+			float( gl_GlobalInvocationID.y ),
+			float( gl_GlobalInvocationID.z ),
+			float( gl_NumWorkGroups.x ),
+			float( gl_NumWorkGroups.y ),
+			float( gl_NumWorkGroups.z ),
+			16,
+			0.5f,
+			2.0f,
+			true,
+			0
+		);
+		float gWorley = Worley3D(
+			float( gl_GlobalInvocationID.x ),
+			float( gl_GlobalInvocationID.y ),
+			float( gl_GlobalInvocationID.z ),
+			float( gl_NumWorkGroups.x ),
+			float( gl_NumWorkGroups.y ),
+			float( gl_NumWorkGroups.z ),
+			8.0f,
+			2.0f,
+			8.0f,
+			0
+		);
+		float bWorley = Worley3D(
+			float( gl_GlobalInvocationID.x ),
+			float( gl_GlobalInvocationID.y ),
+			float( gl_GlobalInvocationID.z ),
+			float( gl_NumWorkGroups.x ),
+			float( gl_NumWorkGroups.y ),
+			float( gl_NumWorkGroups.z ),
+			16.0f,
+			4.0f,
+			16.0f,
+			0
+		);
+		float aWorley = Worley3D(
+			float( gl_GlobalInvocationID.x ),
+			float( gl_GlobalInvocationID.y ),
+			float( gl_GlobalInvocationID.z ),
+			float( gl_NumWorkGroups.x ),
+			float( gl_NumWorkGroups.y ),
+			float( gl_NumWorkGroups.z ),
+			32.0f,
+			8.0f,
+			32.0f,
+			0
+		);
+
+		color.r = RangeMapFloat( perlin, -1.0f, 1.0f, 0.0f, 1.0f );
+		color.g = gWorley;
+		color.b = bWorley;
+		color.a = aWorley;
+	}
+	else		// Detail texture
+	{
+		float rWorley = Worley3D(
+			float( gl_GlobalInvocationID.x ),
+			float( gl_GlobalInvocationID.y ),
+			float( gl_GlobalInvocationID.z ),
+			float( gl_NumWorkGroups.x ),
+			float( gl_NumWorkGroups.y ),
+			float( gl_NumWorkGroups.z ),
+			2.0f,
+			2.0f,
+			2.0f,
+			0
+		);
+		float gWorley = Worley3D(
+			float( gl_GlobalInvocationID.x ),
+			float( gl_GlobalInvocationID.y ),
+			float( gl_GlobalInvocationID.z ),
+			float( gl_NumWorkGroups.x ),
+			float( gl_NumWorkGroups.y ),
+			float( gl_NumWorkGroups.z ),
+			4.0f,
+			4.0f,
+			4.0f,
+			0
+		);
+		float bWorley = Worley3D(
+			float( gl_GlobalInvocationID.x ),
+			float( gl_GlobalInvocationID.y ),
+			float( gl_GlobalInvocationID.z ),
+			float( gl_NumWorkGroups.x ),
+			float( gl_NumWorkGroups.y ),
+			float( gl_NumWorkGroups.z ),
+			8.0f,
+			8.0f,
+			8.0f,
+			0
+		);
+
+		color.r = rWorley;
+		color.g = gWorley;
+		color.b = bWorley;
+	}
+
+	imageStore( noiseTex, storePos, color );
+}
