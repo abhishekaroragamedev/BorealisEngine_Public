@@ -43,6 +43,10 @@ enum ShaderToggleOption	:	int
 	SUNLIGHT_INTENSITY,
 	CAMERA_FOV_DEGREES,
 	VAN_DER_CORPUT_NUMBER,
+	GOD_RAYS_NUM_SAMPLES,
+	GOD_RAYS_WEIGHT,
+	GOD_RAYS_DECAY,
+	GOD_RAYS_EXPOSURE,
 	NUM_TOGGLE_OPTIONS
 };
 
@@ -59,6 +63,7 @@ public:
 
 	void MoveCameraTo( const Vector3& position );
 	void MoveCamera( const Vector3& displacement );
+	void CameraLookAt( const Vector3& lookAtPosition );
 
 private:
 	void InitializeCamerasAndScratchTarget();
@@ -90,6 +95,7 @@ private:
 	void RenderSky() const;
 	void RenderScatteringTransmittance() const;
 	void RenderPostProcess() const;
+	void RenderDeferredLighting() const;
 	void RenderCopyToDefaultColorTarget() const;
 	void RenderVisualDebugOverlay() const;
 	void RenderDepthTargetDebug() const;
@@ -119,7 +125,7 @@ private:
 	LightUBO* m_sceneLights[ 8 ] = {};
 	Vector3 m_sunPositionPolar = Vector3( 999999.0f, 45.0f, 45.0f );
 	Camera* m_gameCamera = nullptr;
-	Renderable* m_terrain = nullptr;
+	std::vector<Renderable*> m_terrainChunks;
 	Renderable* m_ship = nullptr;
 	Transform m_shipTransform;
 
@@ -129,22 +135,22 @@ private:
 	Texture* m_weatherTexture = nullptr;
 	Texture* m_heightSignal = nullptr;
 	Texture* m_mieLUT = nullptr;
+	Sampler* m_clampSampler = nullptr;
 
 	// Deferred lighting
 	Texture* m_sceneNormalTarget = nullptr;
 	Texture* m_sceneSpecularTarget = nullptr;
 	Texture* m_volumetricShadowTarget = nullptr;
-	Sampler* m_depthPointSampler = nullptr;
 	bool m_usePointSampler = false;
 
 	// For scaling up in the end
 	Texture* m_sceneColorTarget = nullptr;
-	Texture* m_sceneDepthTarget = nullptr;
 	Texture* m_lowResScratchTarget = nullptr;
 
-	// Temporal upsampling
-	unsigned int m_currentUpsamplingTargetIndex = 0U;
-	Texture* m_upsamplingTargets[ 2 ] = {};
+	// Temporal reprojection
+	unsigned int m_currentReprojectionTargetIndex = 0U;
+	Texture* m_reprojectionTargets[2] = {};
+	Texture* m_sceneDepthTargets[2] = {};
 	Matrix44 m_oldViewMatrix;
 	float m_raymarchOffset;
 	float* m_vanDerCorputSequence = nullptr;
@@ -165,31 +171,36 @@ private:
 	// Debug variables
 	bool m_debugOverlayEnabled = false;
 	Camera* m_debugOverlayCamera = nullptr;
-	ShaderToggleOption m_toggleOption = ShaderToggleOption::SHADOWS;
+	ShaderToggleOption m_toggleOption = ShaderToggleOption::MAX_DENSITY;
 	float m_cloudLayerAltitude = 5200.0f;
 	float m_cloudLayerHeight = 200.0f;
 	float m_shadowsEnabled = 1.0f;
-	float m_weatherTextureTileFactor = 1.5f;
-	float m_shapeTextureTileFactor = 2.0f;
-	float m_detailTextureTileFactor = 1.8f;
+	float m_weatherTextureTileFactor = 1.f;
+	float m_shapeTextureTileFactor = 1.f;
+	float m_detailTextureTileFactor = 1.f;
 	float m_shapeWorleyInvertFactor = 1.0f;
 	float m_detailWorleyInvertFactor = 0.15f;
-	float m_maxCloudDensity = 1.0f;
+	float m_maxCloudDensity = 0.12f;
 	float m_miePhaseFunctionMax = 0.0f;
-	float m_sunlightIntensity = 0.1f;
+	float m_sunlightIntensity = 0.5f;
 	float m_detailTextureOffset = 0.0f;
 	float m_cameraFOV = 35.0f;
-	bool m_temporalUpsamplingEnabled = true;
-	bool m_detailTexturePanningEnabled = true;
+	bool m_temporalReprojectionEnabled = true;
+	bool m_sunMovedThisFrame = false;
+	bool m_detailTexturePanningEnabled = false;
 	bool m_debugLodsEnabled = false;
 	bool m_cloudsEnabled = true;
-	bool m_godRaysEnabled = true;
 	bool m_possessShip = false;
+	bool m_godRaysEnabled = true;
+	float m_godRaysNumSamples = 200.f;
+	float m_godRaysWeight = 0.05f;
+	float m_godRaysDecay = 0.95f;
+	float m_godRaysExposure = 2.f;
 
 	Vector3 m_origin					= Vector3::ZERO;	// Will be set from XML on start
-	const Vector3 m_snapBottomPosition	= Vector3( 0.0f, 1.0f, 0.0f );
-	const Vector3 m_snapMiddlePosition	= Vector3( 0.0f, 300.0f, 0.0f );
-	const Vector3 m_snapTopPosition		= Vector3( 0.0f, 500.0f, 0.0f );
+	const Vector3 m_snapBottomPosition	= Vector3( 0.0f, 40.0f, 0.0f );
+	const Vector3 m_snapMiddlePosition	= Vector3( 0.0f, 250.0f, 0.0f );
+	const Vector3 m_snapTopPosition		= Vector3( 0.0f, 400.0f, 0.0f );
 
 };
 
@@ -199,3 +210,4 @@ Vector3 TerrainSurfacePatchRadial( float u, float v );
 bool SetAmbientLightCommand( Command& command );
 bool CameraGoToCommand( Command& command );
 bool CameraGoInDirectionCommand( Command& command );
+bool CameraLookAtCommand( Command& command );

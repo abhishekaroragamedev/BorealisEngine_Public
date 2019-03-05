@@ -195,13 +195,6 @@ void TheApp::RunFrame()
 	Profiler::EndFrame();
 #endif
 
-	/*
-	static double s_frameTime = 0.0;
-	double currentTime = GetCurrentTimeSeconds();
-	double deltaTime = currentTime - s_frameTime;
-	s_frameTime = currentTime;
-	ConsolePrintf( "Frame time: %.03f", deltaTime * 1000.0 );
-	*/
 	Sleep( 1 );
 }
 

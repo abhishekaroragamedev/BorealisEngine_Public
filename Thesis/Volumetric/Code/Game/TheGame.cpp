@@ -7,6 +7,7 @@
 #include "Engine/Core/Image.hpp"
 #include "Engine/Core/Window.hpp"
 #include "Engine/FileUtils/File.hpp"
+#include "Engine/Math/FloatRange.hpp"
 #include "Engine/Procedural/SmoothNoise.hpp"
 #include "Engine/Renderer/DebugRenderSystem.hpp"
 #include "Engine/Renderer/ForwardRenderingPath.hpp"
@@ -24,6 +25,9 @@
 #include "Engine/Tools/DevConsole.hpp"
 #include "Engine/Tools/Profiler/ProfileScope.hpp"
 #include "ThirdParty/tinyXML2/tinyxml2.h"
+
+#define NO_DEBUG
+//#define LOG_DEBUG
 
 constexpr float CAMERA_NEAR_Z = 0.1f;
 constexpr float CAMERA_FAR_Z = 5000.0f;
@@ -46,6 +50,7 @@ TheGame::TheGame()
 	CommandRegister( "set_ambient_light", SetAmbientLightCommand, "Sets the ambient light color and intensity associated with a specified shader, or with the active shader." );
 	CommandRegister( "goto", CameraGoToCommand, "Moves the camera to the specified position." );
 	CommandRegister( "goin", CameraGoInDirectionCommand, "Moves the camera by the specified displacement." );
+	CommandRegister( "lookat", CameraLookAtCommand, "Makes the camera look in the specified direction. Global up is assumed." );
 }
 
 TheGame::~TheGame()
@@ -58,8 +63,8 @@ TheGame::~TheGame()
 	delete m_debugOverlayCamera;
 	m_debugOverlayCamera = nullptr;
 
-	delete m_depthPointSampler;
-	m_depthPointSampler = nullptr;
+	delete m_clampSampler;
+	m_clampSampler = nullptr;
 
 	delete m_volumetricShadowTarget;
 	m_volumetricShadowTarget = nullptr;
@@ -73,16 +78,15 @@ TheGame::~TheGame()
 	delete m_sceneColorTarget;
 	m_sceneColorTarget = nullptr;
 
-	delete m_sceneDepthTarget;
-	m_sceneDepthTarget = nullptr;
-
 	delete m_gameCamera;
 	m_gameCamera = nullptr;
 
 	delete m_mieLUT;
 
-	delete m_upsamplingTargets[ 0 ];
-	delete m_upsamplingTargets[ 1 ];
+	delete m_sceneDepthTargets[0];
+	delete m_sceneDepthTargets[1];
+	delete m_reprojectionTargets[ 0 ];
+	delete m_reprojectionTargets[ 1 ];
 
 	delete m_shapeTexture;
 	delete m_detailTexture;
@@ -95,6 +99,7 @@ TheGame::~TheGame()
 	CommandUnregister( "set_ambient_light" );
 	CommandUnregister( "goto" );
 	CommandUnregister( "goin" );
+	CommandUnregister( "lookat" );
 }
 
 void TheGame::DeleteRenderables()
@@ -104,7 +109,10 @@ void TheGame::DeleteRenderables()
 	delete m_mieGraphG;
 	delete m_mieGraphB;
 	delete m_ship;
-	delete m_terrain;
+	for ( Renderable* terrainChunk : m_terrainChunks )
+	{
+		delete terrainChunk;
+	}
 }
 
 #pragma region Initialization
@@ -114,9 +122,10 @@ void TheGame::InitializeCamerasAndScratchTarget()
 	unsigned int rtHeight = static_cast<unsigned int>( RENDER_TARGET_HEIGHT );
 	unsigned int rtWidth = static_cast<unsigned int>( RENDER_TARGET_HEIGHT * CLIENT_ASPECT );
 	m_sceneColorTarget = g_renderer->CreateRenderTarget( rtWidth, rtHeight, TEXTURE_FORMAT_RGBA8 );
-	m_sceneDepthTarget = g_renderer->CreateDepthStencilTarget( rtWidth, rtHeight );
+	m_sceneDepthTargets[0] = g_renderer->CreateDepthStencilTarget( rtWidth, rtHeight );
+	m_sceneDepthTargets[1] = g_renderer->CreateDepthStencilTarget( rtWidth, rtHeight );
 
-	m_gameCamera = new Camera( m_sceneColorTarget, m_sceneDepthTarget, true );
+	m_gameCamera = new Camera( m_sceneColorTarget, m_sceneDepthTargets[m_currentReprojectionTargetIndex], true );
 	m_gameCamera->SetProjection( Matrix44::MakePerspective( 35.0f, Window::GetAspect(), CAMERA_NEAR_Z, CAMERA_FAR_Z ) );
 	m_gameCamera->SetMaxShadowDepth( 10.0f );
 	m_oldViewMatrix = m_gameCamera->GetViewMatrix();
@@ -172,8 +181,8 @@ void TheGame::InitializeShaderResources()
 	m_weatherTexture = g_renderer->CreateOrGetTexture( std::string( WEATHER_TEXTURE_FILEPATH ), 11U, TEXTURE_FORMAT_RGBA8 );
 	m_heightSignal = g_renderer->CreateOrGetTexture( std::string( HEIGHT_SIGNAL_FILEPATH ), 8U, TEXTURE_FORMAT_RGBA8 );
 
-	SamplerOptions samplerOptions = SamplerOptions{ SamplerWrapMode::SAMPLER_WRAP_CLAMP_EDGE, SamplerSampleMode::SAMPLER_NEAREST };
-	m_depthPointSampler = new Sampler( samplerOptions );
+	SamplerOptions samplerOptions = SamplerOptions{ SamplerWrapMode::SAMPLER_WRAP_CLAMP_EDGE, SamplerSampleMode::SAMPLER_LINEAR };
+	m_clampSampler = new Sampler( samplerOptions );
 }
 
 void TheGame::InitializeTerrain()
@@ -182,21 +191,49 @@ void TheGame::InitializeTerrain()
 	float maxPointLength = m_cloudLayerAltitude;
 	float terrainHeight = g_gameConfigBlackboard.GetValue( "terrainHeight", 500.0f );
 	float maxRadius = sqrtf( (maxPointLength * maxPointLength) - (terrainHeight * terrainHeight) );
+	UNUSED( maxRadius );
 
-	MeshBuilder mb;
-	mb.Begin( DrawPrimitiveType::TRIANGLES );
-
-	// mb.AddSurfacePatch( TerrainSurfacePatch, FloatRange( -2000.0f, 2000.0f ), FloatRange( -2000.0f, 2000.0f ), IntVector2( 250, 250 ) );
-	mb.AddSurfacePatch( TerrainSurfacePatchRadial, FloatRange( 0.0f, maxRadius ), FloatRange( 0.0f, 360.0f ), IntVector2( 300, 300 ) );
-
-	mb.End();
-
-	m_terrain = new Renderable();
-	m_terrain->SetModelMatrix( Matrix44::MakeTranslation( Vector3( 0.0f, terrainHeight, 0.0f ) ) );
-	m_terrain->SetMesh( mb.CreateMesh() );
+	int numChunks = g_gameConfigBlackboard.GetValue( "terrainNumChunks1D", 1 );
+	FloatRange terrainRange( -2000.0f, 2000.0f );
+	IntVector2 terrainNumSamples( 250, 250 );
+	terrainNumSamples.x /= numChunks;
+	terrainNumSamples.y /= numChunks;
+	Vector2 terrainRangeIncrements = Vector2(
+		terrainRange.Size() / static_cast<float>( numChunks ),
+		terrainRange.Size() / static_cast<float>( numChunks )
+	);
 
 	Material* terrainMaterial = Renderer::GetInstance()->CreateOrGetMaterial( "Terrain" );
-	m_terrain->ReplaceMaterial( terrainMaterial, false );
+	MeshBuilder mb;
+	for ( int i = 0; i < numChunks; i++ )
+	{
+		for ( int j = 0; j < numChunks; j++ )
+		{
+			mb.Begin( DrawPrimitiveType::TRIANGLES );
+
+			FloatRange currentRangeX(
+				terrainRange.min + ( static_cast<float>( i ) * terrainRangeIncrements.x ),
+				terrainRange.min + ( static_cast<float>( i + 1 ) * terrainRangeIncrements.x )
+			);
+			FloatRange currentRangeZ(
+				terrainRange.min + ( static_cast<float>( j ) * terrainRangeIncrements.y ),
+				terrainRange.min + ( static_cast<float>( j + 1 ) * terrainRangeIncrements.y)
+			);
+			mb.AddSurfacePatch( TerrainSurfacePatch, currentRangeX, currentRangeZ, terrainNumSamples );
+			// TODO: Rewrite radial patch
+			//mb.AddSurfacePatch( TerrainSurfacePatchRadial, FloatRange( 0.0f, maxRadius ), FloatRange( 0.0f, 360.0f ), IntVector2( 300, 300 ) );
+
+			mb.End();
+
+			Renderable* newChunk = new Renderable();
+			newChunk->SetModelMatrix( Matrix44::MakeTranslation( Vector3( 0.0f, terrainHeight, 0.0f ) ) );
+			newChunk->SetMesh( mb.CreateMesh() );
+			newChunk->ReplaceMaterial( terrainMaterial, false );
+			m_terrainChunks.push_back( newChunk );
+
+			mb.Clear();
+		}
+	}
 }
 
 void TheGame::InitializeShip()
@@ -467,14 +504,14 @@ void TheGame::InitializeCloudRenderTargets()
 
 	m_volumetricShadowTarget = g_renderer->CreateRenderTarget( width, height );
 
-	m_upsamplingTargets[ 0 ] = g_renderer->CreateRenderTarget( width, height );
-	Camera* clearCamera = new Camera( m_upsamplingTargets[ 0 ] );
+	m_reprojectionTargets[ 0 ] = g_renderer->CreateRenderTarget( width, height, TEXTURE_FORMAT_RGBA32 );	// Higher precision needed for convergence
+	Camera* clearCamera = new Camera( m_reprojectionTargets[ 0 ] );
 	g_renderer->SetCamera( clearCamera );
 	g_renderer->ClearColor( Rgba( 0, 0, 0, 255 ) );	// Initial scattered light = 0, initial transmittance = 1
 	clearCamera->RemoveColorTarget( 0U );
 
-	m_upsamplingTargets[ 1 ] = g_renderer->CreateRenderTarget( width, height );
-	clearCamera->SetColorTarget( m_upsamplingTargets[ 1 ] );
+	m_reprojectionTargets[ 1 ] = g_renderer->CreateRenderTarget( width, height, TEXTURE_FORMAT_RGBA32 );
+	clearCamera->SetColorTarget( m_reprojectionTargets[ 1 ] );
 	g_renderer->SetCamera( clearCamera );
 	g_renderer->ClearColor( Rgba( 0, 0, 0, 255 ) );	// Initial scattered light = 0, initial transmittance = 1
 	clearCamera->RemoveColorTarget( 0U );
@@ -515,9 +552,10 @@ void TheGame::Update()
 		UpdateRenderTargets();
 		UpdateShipMatrixFromTransform();
 
-		if ( m_temporalUpsamplingEnabled )
+		if ( m_temporalReprojectionEnabled )
 		{
 			m_vanDerCorputCurrentIndex = ( m_vanDerCorputCurrentIndex + 1U ) % m_vanDerCorputPower;
+			m_vanDerCorputCurrentIndex = ClampInt( m_vanDerCorputCurrentIndex, 1U, ( m_vanDerCorputPower - 1U ) );	// The value 0 seems to cause noise issues for raymarch offsets, so don't allow it
 		}
 		if ( m_detailTexturePanningEnabled )
 		{
@@ -582,6 +620,12 @@ void TheGame::HandleCameraInput()
 
 	// Translation
 	float translationMagnitude = g_gameConfigBlackboard.GetValue( "cameraTranslationPerSecond", 1.0f );
+	float translationMultiplier = 1.f;
+	if ( g_inputSystem->IsKeyDown( InputSystem::KEYBOARD_SHIFT ) )
+	{
+		translationMultiplier = g_gameConfigBlackboard.GetValue( "cameraTranslationMultiplier", 5.f );
+	}
+	translationMagnitude *= translationMultiplier;
 	Transform* transformToUpdate = ( m_possessShip )? &m_shipTransform : m_gameCamera->GetTransform();
 	if ( g_inputSystem->IsKeyDown( InputSystem::KEYBOARD_W ) )
 	{
@@ -618,8 +662,8 @@ void TheGame::HandleCameraInput()
 
 		transformToUpdate->Rotate( 
 			Vector3(
-				( mouseDelta.y * rotationMagnitude * GetMasterDeltaSecondsF() ),
-				( mouseDelta.x * rotationMagnitude * GetMasterDeltaSecondsF() ),
+				( mouseDelta.y * rotationMagnitude ),
+				( mouseDelta.x * rotationMagnitude ),
 				0.0f
 			)
 		);
@@ -698,6 +742,8 @@ void TheGame::HandleSunPositionInput()
 			Vector3::ZERO
 		);
 	}
+
+	m_sunMovedThisFrame = wasModified;
 }
 
 bool TheGame::HandleOptionsInput()
@@ -709,14 +755,17 @@ bool TheGame::HandleOptionsInput()
 	if ( g_inputSystem->WasKeyJustPressed( InputSystem::KEYBOARD_4 ) )
 	{
 		m_detailTexturePanningEnabled = !m_detailTexturePanningEnabled;
+		DebugRenderLogF( 2.f, Rgba::GREEN, Rgba::RED, nullptr, DEFAULT_FONT_NAME, "Detail texture panning enabled: %s", (m_detailTexturePanningEnabled)? "true" : "false" );
 	}
 	if ( g_inputSystem->WasKeyJustPressed( InputSystem::KEYBOARD_5 ) )
 	{
 		m_debugLodsEnabled = !m_debugLodsEnabled;
+		DebugRenderLogF( 2.f, Rgba::GREEN, Rgba::RED, nullptr, DEFAULT_FONT_NAME, "Debug LODs enabled: %s", (m_debugLodsEnabled)? "true" : "false" );
 	}
 	if ( g_inputSystem->WasKeyJustPressed( InputSystem::KEYBOARD_6 ) )
 	{
-		m_temporalUpsamplingEnabled = !m_temporalUpsamplingEnabled;
+		m_temporalReprojectionEnabled = !m_temporalReprojectionEnabled;
+		DebugRenderLogF( 2.f, Rgba::GREEN, Rgba::RED, nullptr, DEFAULT_FONT_NAME, "Temporal reprojection enabled: %s", (m_temporalReprojectionEnabled)? "true" : "false" );
 	}
 	if ( g_inputSystem->WasKeyJustPressed( InputSystem::KEYBOARD_L ) )
 	{
@@ -802,6 +851,12 @@ void TheGame::MoveCamera( const Vector3& displacement )
 	transformToModify->MarkDirty();
 }
 
+void TheGame::CameraLookAt( const Vector3& lookAtPosition )
+{
+	Vector3 cameraPos = m_gameCamera->GetPosition();
+	m_gameCamera->LookAt( cameraPos, lookAtPosition );
+}
+
 std::string TheGame::GetNameForCurrentToggleOption() const
 {
 	switch ( m_toggleOption )
@@ -818,6 +873,10 @@ std::string TheGame::GetNameForCurrentToggleOption() const
 		case MAX_DENSITY					:	return "Max cloud density";
 		case CAMERA_FOV_DEGREES				:	return "Camera FOV";
 		case VAN_DER_CORPUT_NUMBER			:	return "Van der Corput number";
+		case GOD_RAYS_WEIGHT				:	return "God Rays - Weight";
+		case GOD_RAYS_DECAY					:	return "God Rays - Decay";
+		case GOD_RAYS_EXPOSURE				:	return "God Rays - Exposure";
+		case GOD_RAYS_NUM_SAMPLES			:	return "God Rays - Num Samples";
 		default	:	return "";
 	}
 }
@@ -856,6 +915,10 @@ void TheGame::HandleShaderToggleInput()
 			case SUNLIGHT_INTENSITY				:	m_sunlightIntensity -= 50.0f * GetMasterDeltaSecondsF();	m_sunlightIntensity = Max( m_sunlightIntensity, 0.0f );	debugText = Stringf( "%s: %f", GetNameForCurrentToggleOption().c_str(), m_sunlightIntensity );	break;
 			case CAMERA_FOV_DEGREES				:	m_cameraFOV -= GetMasterDeltaSecondsF();	m_cameraFOV = Max( m_cameraFOV, 20.0f );	debugText = Stringf( "%s: %f", GetNameForCurrentToggleOption().c_str(), m_cameraFOV );	break;
 			case VAN_DER_CORPUT_NUMBER			:	m_vanDerCorputCurrentIndex = ( m_vanDerCorputCurrentIndex == 0U )? ( m_vanDerCorputPower - 1U ) : ( m_vanDerCorputCurrentIndex - 1U );	debugText = Stringf( "%s: %u", GetNameForCurrentToggleOption().c_str(), m_vanDerCorputCurrentIndex );	break;
+			case GOD_RAYS_WEIGHT				:	m_godRaysWeight = ClampFloat( m_godRaysWeight - ( 0.05f * GetMasterDeltaSecondsF() ), 0.f, 1.f );	debugText = Stringf( "%s: %.2f", GetNameForCurrentToggleOption().c_str(), m_godRaysWeight );	break;
+			case GOD_RAYS_DECAY					:	m_godRaysDecay = ClampFloat( m_godRaysDecay - ( 0.01f * GetMasterDeltaSecondsF() ), 0.f, 1.f );	debugText = Stringf( "%s: %.2f", GetNameForCurrentToggleOption().c_str(), m_godRaysDecay );	break;
+			case GOD_RAYS_EXPOSURE				:	m_godRaysExposure = ClampFloat( m_godRaysExposure - ( 0.1f * GetMasterDeltaSecondsF() ), 0.f, 100.f );	debugText = Stringf( "%s: %.2f", GetNameForCurrentToggleOption().c_str(), m_godRaysExposure );	break;
+			case GOD_RAYS_NUM_SAMPLES			:	m_godRaysNumSamples = ClampFloat( m_godRaysNumSamples - ( 5.f * GetMasterDeltaSecondsF() ), 0.f, 5000.f );	debugText = Stringf( "%s: %.2f", GetNameForCurrentToggleOption().c_str(), m_godRaysNumSamples );	break;
 		}
 
 		DebugRenderLogF( 2.0f, Rgba::GREEN, Rgba::RED, nullptr, DEFAULT_FONT_NAME, debugText.c_str() );
@@ -877,6 +940,10 @@ void TheGame::HandleShaderToggleInput()
 			case SUNLIGHT_INTENSITY				:	m_sunlightIntensity += 50.0f * GetMasterDeltaSecondsF();	m_sunlightIntensity = Max( m_sunlightIntensity, 0.0f );	debugText = Stringf( "%s: %f", GetNameForCurrentToggleOption().c_str(), m_sunlightIntensity );	break;
 			case CAMERA_FOV_DEGREES				:	m_cameraFOV += GetMasterDeltaSecondsF();	m_cameraFOV = Min( m_cameraFOV, 90.0f );	debugText = Stringf( "%s: %f", GetNameForCurrentToggleOption().c_str(), m_cameraFOV );	break;
 			case VAN_DER_CORPUT_NUMBER			:	m_vanDerCorputCurrentIndex = ( m_vanDerCorputCurrentIndex + 1U ) % m_vanDerCorputPower;	debugText = Stringf( "%s: %u", GetNameForCurrentToggleOption().c_str(), m_vanDerCorputCurrentIndex );	break;
+			case GOD_RAYS_WEIGHT				:	m_godRaysWeight = ClampFloat( m_godRaysWeight + ( 0.05f * GetMasterDeltaSecondsF() ), 0.f, 1.f );	debugText = Stringf( "%s: %.2f", GetNameForCurrentToggleOption().c_str(), m_godRaysWeight );	break;
+			case GOD_RAYS_DECAY					:	m_godRaysDecay = ClampFloat( m_godRaysDecay + ( 0.01f * GetMasterDeltaSecondsF() ), 0.f, 1.f );	debugText = Stringf( "%s: %.2f", GetNameForCurrentToggleOption().c_str(), m_godRaysDecay );	break;
+			case GOD_RAYS_EXPOSURE				:	m_godRaysExposure = ClampFloat( m_godRaysExposure + ( 0.1f * GetMasterDeltaSecondsF() ), 0.f, 100.f );	debugText = Stringf( "%s: %.2f", GetNameForCurrentToggleOption().c_str(), m_godRaysExposure );	break;
+			case GOD_RAYS_NUM_SAMPLES			:	m_godRaysNumSamples = ClampFloat( m_godRaysNumSamples + ( 5.f * GetMasterDeltaSecondsF() ), 0.f, 5000.f );	debugText = Stringf( "%s: %.2f", GetNameForCurrentToggleOption().c_str(), m_godRaysNumSamples );	break;
 		}
 
 		DebugRenderLogF( 2.0f, Rgba::GREEN, Rgba::RED, nullptr, DEFAULT_FONT_NAME, debugText.c_str() );
@@ -896,7 +963,8 @@ void TheGame::UpdateAmbientLight()
 	Vector4 ambientLight = g_renderer->GetAmbientLight();
 	ambientLight.w = RangeMapFloat( m_sunPositionPolar.z, 0.0f, 90.0f, 0.01f, 1.0f );
 	ambientLight.w = SmoothStop3( ambientLight.w );
-	g_renderer->SetAmbientLight( ambientLight );
+	g_renderer->SetAmbientLight( Vector4( 1.f, 1.f, 1.f, 1.f ) );
+	//g_renderer->SetAmbientLight( ambientLight );
 }
 
 void TheGame::UpdateCameraProperties()
@@ -906,8 +974,8 @@ void TheGame::UpdateCameraProperties()
 
 void TheGame::UpdateRenderTargets()
 {
-	unsigned int nextRenderTargetIndex = ( m_currentUpsamplingTargetIndex + 1U ) % 2U;
-	m_currentUpsamplingTargetIndex = nextRenderTargetIndex;
+	unsigned int nextRenderTargetIndex = ( m_currentReprojectionTargetIndex + 1U ) % 2U;
+	m_currentReprojectionTargetIndex = nextRenderTargetIndex;
 }
 
 void TheGame::UpdateShipMatrixFromTransform()
@@ -946,6 +1014,7 @@ void TheGame::Render() const
 	{
 		RenderScatteringTransmittance();
 		RenderPostProcess();
+		RenderDeferredLighting();
 	}
 	// Copy low-res image to high-res default target
 	RenderCopyToDefaultColorTarget();
@@ -971,7 +1040,7 @@ void TheGame::RenderInit() const
 	m_gameCamera->SetColorTarget( m_sceneColorTarget, 0U );
 	m_gameCamera->SetColorTarget( m_sceneNormalTarget, 1U );
 	m_gameCamera->SetColorTarget( m_sceneSpecularTarget, 2U );
-	m_gameCamera->SetDepthStencilTarget( m_sceneDepthTarget );
+	m_gameCamera->SetDepthStencilTarget( m_sceneDepthTargets[m_currentReprojectionTargetIndex] );
 	g_renderer->SetCamera( m_gameCamera );
 	g_renderer->ClearColor();
 	g_renderer->WriteDepthImmediate( true );
@@ -994,7 +1063,10 @@ void TheGame::RenderScene() const
 
 	Material* materialRef = g_renderer->CreateOrGetMaterial( "Terrain" );
 	g_renderer->BindMaterial( *materialRef );
-	g_renderer->DrawRenderable( *m_terrain );
+	for ( Renderable* chunk : m_terrainChunks )
+	{
+		g_renderer->DrawRenderable( *chunk );
+	}
 
 	materialRef = g_renderer->CreateOrGetMaterial( "Ship" );
 	g_renderer->BindMaterial( *materialRef );
@@ -1009,7 +1081,7 @@ void TheGame::RenderSky() const
 {
 	PROFILE_SCOPE( "TheGame::RenderSky()" );
 
-	Texture* depthTarget =  m_sceneDepthTarget;
+	Texture* depthTarget =  m_sceneDepthTargets[m_currentReprojectionTargetIndex];
 	m_gameCamera->SetDepthStencilTarget( nullptr );
 	g_renderer->SetCamera( m_gameCamera );
 
@@ -1021,9 +1093,9 @@ void TheGame::RenderSky() const
 	skyEffect->SetProperty( "TERRAIN_HEIGHT", g_gameConfigBlackboard.GetValue( "terrainHeight", 500.0f ) );
 	skyEffect->SetProperty( "ATMOSPHERE_LAYER_ALTITUDE", m_cloudLayerAltitude + ( 2.0f * m_cloudLayerHeight ) );
 	skyEffect->SetProperty( "ATMOSPHERE_LAYER_HEIGHT", 10000.0f );
-	skyEffect->SetTextureAndSampler( 0U, originalTarget, g_renderer->GetDefaultSampler() );
-	skyEffect->SetTextureAndSampler( 1U, depthTarget, (m_usePointSampler)? m_depthPointSampler : g_renderer->GetDefaultSampler() );
-	skyEffect->SetTextureAndSampler( 2U, m_mieLUT, g_renderer->GetDefaultSampler() );
+	skyEffect->SetTextureAndSampler( 0U, originalTarget, m_clampSampler );
+	skyEffect->SetTextureAndSampler( 1U, depthTarget, m_clampSampler );
+	skyEffect->SetTextureAndSampler( 2U, m_mieLUT, m_clampSampler );
 
 	g_renderer->ApplyEffect( skyEffect, m_gameCamera, m_lowResScratchTarget );
 	g_renderer->FinishEffects( originalTarget );
@@ -1040,7 +1112,8 @@ void TheGame::RenderScatteringTransmittance() const
 	raymarcher->SetProperty( "CLOUD_LAYER_ALTITUDE", m_cloudLayerAltitude );
 	raymarcher->SetProperty( "CLOUD_LAYER_HEIGHT", m_cloudLayerHeight );
 	raymarcher->SetProperty( "SHADOWS_ENABLED", m_shadowsEnabled );
-	raymarcher->SetProperty( "TEMPORAL_UPSAMPLING_ENABLED", (m_temporalUpsamplingEnabled)? 1.0f : 0.0f );
+	raymarcher->SetProperty( "TEMPORAL_REPROJECTION_ENABLED", (m_temporalReprojectionEnabled)? 1.0f : 0.0f );
+	raymarcher->SetProperty( "SUN_MOVED_THIS_FRAME", (m_sunMovedThisFrame)? 1.0f : 0.0f );
 	raymarcher->SetProperty( "WEATHER_TEXTURE_TILE_FACTOR", m_weatherTextureTileFactor );
 	raymarcher->SetProperty( "SHAPE_TEXTURE_TILE_FACTOR", m_shapeTextureTileFactor );
 	raymarcher->SetProperty( "DETAIL_TEXTURE_TILE_FACTOR", m_detailTextureTileFactor );
@@ -1056,17 +1129,18 @@ void TheGame::RenderScatteringTransmittance() const
 	raymarcher->SetTextureAndSampler( 1U, m_heightSignal, g_renderer->GetDefaultSampler(true) );
 	g_renderer->BindTexture3DAndSampler( 2U, *m_shapeTexture, *g_renderer->GetDefaultSampler(true) );
 	g_renderer->BindTexture3DAndSampler( 3U, *m_detailTexture, *g_renderer->GetDefaultSampler(true) );
-	g_renderer->BindTextureAndSampler( 4U, *m_mieLUT, *g_renderer->GetDefaultSampler() );
-	raymarcher->SetTextureAndSampler( 5U, m_upsamplingTargets[ m_currentUpsamplingTargetIndex ], g_renderer->GetDefaultSampler() );
-	raymarcher->SetTextureAndSampler( 6U, m_sceneDepthTarget, (m_usePointSampler)? m_depthPointSampler : g_renderer->GetDefaultSampler() );
+	g_renderer->BindTextureAndSampler( 4U, *m_mieLUT, *m_clampSampler );
+	raymarcher->SetTextureAndSampler( 5U, m_reprojectionTargets[ m_currentReprojectionTargetIndex ], m_clampSampler );
+	raymarcher->SetTextureAndSampler( 6U, m_sceneDepthTargets[m_currentReprojectionTargetIndex], m_clampSampler );
+	raymarcher->SetTextureAndSampler( 7U, m_sceneDepthTargets[(m_currentReprojectionTargetIndex + 1) % 2], m_clampSampler );
 
 	m_gameCamera->SetDepthStencilTarget( nullptr );
-	m_gameCamera->SetColorTarget( m_upsamplingTargets[ ( m_currentUpsamplingTargetIndex + 1U ) % 2U ], 0U );
+	m_gameCamera->SetColorTarget( m_reprojectionTargets[ ( m_currentReprojectionTargetIndex + 1U ) % 2U ], 0U );
 	m_gameCamera->SetColorTarget( m_volumetricShadowTarget, 1U );
 	g_renderer->SetCamera( m_gameCamera );
 
 	g_renderer->DrawFullScreenImmediate( *raymarcher );
-
+	
 	m_gameCamera->RemoveColorTarget(1U);
 	m_gameCamera->Finalize();
 };
@@ -1079,18 +1153,27 @@ void TheGame::RenderPostProcess() const
 	if (m_godRaysEnabled)
 	{
 		Material* godRayShader = g_renderer->CreateOrGetMaterial( "GodRays" );
-		godRayShader->SetTextureAndSampler( 1U, m_upsamplingTargets[ ( m_currentUpsamplingTargetIndex + 1U ) % 2U ], g_renderer->GetDefaultSampler() );
+		godRayShader->SetProperty( "NUM_SAMPLES", m_godRaysNumSamples );
+		godRayShader->SetProperty( "WEIGHT", m_godRaysWeight );
+		godRayShader->SetProperty( "DECAY", m_godRaysDecay );
+		godRayShader->SetProperty( "EXPOSURE", m_godRaysExposure );
+		godRayShader->SetTextureAndSampler( 1U, m_reprojectionTargets[ ( m_currentReprojectionTargetIndex + 1U ) % 2U ], m_clampSampler );
 		g_renderer->ApplyEffect( godRayShader, m_gameCamera, m_lowResScratchTarget );
 		g_renderer->FinishEffects( m_sceneColorTarget );
 	}
+}
+
+void TheGame::RenderDeferredLighting() const
+{
+	PROFILE_SCOPE( "TheGame::RenderDeferredLighting()" );
 
 	m_gameCamera->GetFrameBuffer()->SetDepthStencilTarget( nullptr );
 	Material* cloudFullscreenShader = g_renderer->CreateOrGetMaterial( "CloudsFullscreen" );
-	cloudFullscreenShader->SetTextureAndSampler( 1U, m_upsamplingTargets[ ( m_currentUpsamplingTargetIndex + 1U ) % 2U ], g_renderer->GetDefaultSampler() );
-	cloudFullscreenShader->SetTextureAndSampler( 2U, m_sceneNormalTarget, g_renderer->GetDefaultSampler() );
-	cloudFullscreenShader->SetTextureAndSampler( 3U, m_volumetricShadowTarget, g_renderer->GetDefaultSampler() );
-	cloudFullscreenShader->SetTextureAndSampler( 4U, m_sceneSpecularTarget, g_renderer->GetDefaultSampler() );
-	cloudFullscreenShader->SetTextureAndSampler( 5U, m_sceneDepthTarget, (m_usePointSampler)? m_depthPointSampler : g_renderer->GetDefaultSampler() );
+	cloudFullscreenShader->SetTextureAndSampler( 1U, m_reprojectionTargets[ ( m_currentReprojectionTargetIndex + 1U ) % 2U ], m_clampSampler );
+	cloudFullscreenShader->SetTextureAndSampler( 2U, m_sceneNormalTarget, m_clampSampler );
+	cloudFullscreenShader->SetTextureAndSampler( 3U, m_volumetricShadowTarget, m_clampSampler );
+	cloudFullscreenShader->SetTextureAndSampler( 4U, m_sceneSpecularTarget, m_clampSampler );
+	cloudFullscreenShader->SetTextureAndSampler( 5U, m_sceneDepthTargets[m_currentReprojectionTargetIndex], m_clampSampler );
 	g_renderer->ApplyEffect( cloudFullscreenShader, m_gameCamera, m_lowResScratchTarget );
 	g_renderer->FinishEffects( m_sceneColorTarget );
 }
@@ -1110,16 +1193,39 @@ void TheGame::RenderGeneralDebugInfo() const
 {
 	PROFILE_SCOPE( "TheGame::RenderGeneralDebugInfo()" );
 
+	static float s_frameTime = 0.f;
+	float currentTime = GetCurrentTimeSecondsF();
+	s_frameTime = currentTime;
+
+#ifdef NO_DEBUG
+#elif defined( LOG_DEBUG )	// High performance - don't print to screen, but log FPS
+	float deltaTime = currentTime - s_frameTime;
+	LogPrintf(
+		"%.3fms | %.3f FPS", ( deltaTime * 1000.f ), ( ( deltaTime > 0.f )? ( 1.f / deltaTime ) : 0.f )
+	);
+#else
+	float deltaTime = currentTime - s_frameTime;
+	float deltaTimeForPrint = GetMasterDeltaSecondsF();
+	DebugRenderLogF(
+		deltaTimeForPrint,
+		Rgba::WHITE,
+		Rgba::WHITE,
+		nullptr,
+		DEFAULT_FONT_NAME,
+		"%.3fms | %.3f FPS", ( deltaTime * 1000.f ), ( ( deltaTime > 0.f )? ( 1.f / deltaTime ) : 0.f )
+	);
+	
 	Vector3 cameraPosition = m_gameCamera->GetPosition();
 	DebugRenderLogF(
-		GetMasterDeltaSecondsF(),
-		Rgba::WHITE,
-		Rgba::WHITE,
+		deltaTimeForPrint,
+		Rgba::YELLOW,
+		Rgba::YELLOW,
 		nullptr,
 		DEFAULT_FONT_NAME,
 		"Camera position: %.2f, %.2f, %.2f",
 		cameraPosition.x, cameraPosition.y, cameraPosition.z
 	);
+#endif
 }
 
 void TheGame::RenderVisualDebugOverlay() const
@@ -1273,11 +1379,12 @@ void TheGame::RenderVisualDebugOverlay() const
 
 void TheGame::RenderDepthTargetDebug() const
 {
-	Texture* depthTarget = m_sceneDepthTarget;
+	Texture* depthTarget = m_sceneDepthTargets[m_currentReprojectionTargetIndex];
 	m_debugOverlayCamera->SetViewport( AABB2( 0.0f, 0.0f, 1.0f, 1.0f ) );
 	g_renderer->SetCamera( m_debugOverlayCamera );
 	g_renderer->BindMaterial( *g_renderer->CreateOrGetMaterial( "FullscreenDepth" ) );
 	g_renderer->DrawTexturedAABB( AABB2( -0.95f, -0.95f, -0.50f, -0.50f ), *depthTarget, Vector2::ZERO, Vector2::ONE, Rgba::WHITE );
+	// TODO: Debug render old depth target?
 }
 
 void TheGame::RenderScatteringTransmittanceDebug() const
@@ -1285,7 +1392,7 @@ void TheGame::RenderScatteringTransmittanceDebug() const
 	m_debugOverlayCamera->SetViewport( AABB2( 0.0f, 0.0f, 1.0f, 1.0f ) );
 	g_renderer->SetCamera( m_debugOverlayCamera );
 	g_renderer->BindMaterial( *g_renderer->CreateOrGetMaterial( "Fullscreen" ) );
-	g_renderer->DrawTexturedAABB( AABB2( 0.5f, -0.35f, 0.95f, 0.1f ), *m_upsamplingTargets[ m_currentUpsamplingTargetIndex ], Vector2::ZERO, Vector2::ONE, Rgba::WHITE );
+	g_renderer->DrawTexturedAABB( AABB2( 0.5f, -0.35f, 0.95f, 0.1f ), *m_reprojectionTargets[ m_currentReprojectionTargetIndex ], Vector2::ZERO, Vector2::ONE, Rgba::WHITE );
 }
 
 void TheGame::RenderSceneShadowsDebug() const
@@ -1436,7 +1543,9 @@ void TheGame::RenderDetailTextureLayerDebug() const
 Vector3 TerrainSurfacePatch( float u, float v ) // Represents the equation y = sin( sqrt( x^2 + z^2 ) ); arbitrary, just a tech demo
 {
 	Vector3 pointOnGraph = Vector3( u, 0.0f, v );
-	pointOnGraph.y = SinDegrees( 360.0f * sqrt( pointOnGraph.x * pointOnGraph.x + pointOnGraph.z * pointOnGraph.z ) );
+	pointOnGraph.y = Compute2dPerlinNoise( u, v, 100.f, 4U );
+	pointOnGraph.y = RangeMapFloat( pointOnGraph.y, -1.f, 1.f, 0.f, 1.f );
+	pointOnGraph.y *= 50.f;
 	return pointOnGraph;
 }
 
@@ -1547,6 +1656,36 @@ bool CameraGoInDirectionCommand( Command& command )
 		}
 
 		g_theGame->MoveCamera( direction );
+		return true;
+	}
+	return false;
+}
+
+bool CameraLookAtCommand( Command& command )
+{
+	if ( command.GetName() == "lookat" )
+	{
+		std::string positionStr = command.GetNextString();
+		if ( positionStr == "" )
+		{
+			ConsolePrintf( Rgba::RED, "ERROR: lookat: Invalid position provided." );
+			return false;
+		}
+
+		Vector3 position;
+		try
+		{
+			position.SetFromText( positionStr );
+		}
+		catch ( std::invalid_argument& arg )
+		{
+			UNUSED( arg );
+			ConsolePrintf( Rgba::RED, "ERROR: lookat: Invalid position provided." );
+			return false;
+		}
+
+		g_theGame->CameraLookAt( position );
+		return true;
 	}
 	return false;
 }

@@ -1,38 +1,41 @@
-Volumetric
+Volumetric Clouds
 Abhishek Arora
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 Known Issues
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-The sharp breaks in the screen when rotating the camera are owing to an optimization that renders only 1/4th of the screen per frame. This is being looked into on priority.
+Building from Volumetric.sln - project won't fully build/run
+Workaround:
+- Open Volumetric.sln
+- Build the Engine project
+- Once done, build the Game project
+- Run the executable outside Visual Studio by double-clicking on Run_Win32/Volumetric.exe
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 How to Use
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-To compile and run:
-1. Go to Thesis/Volumetric
-2. Open Volumetric.sln (made for VS 2017)
-3. Compile and run in Release configuration (must be optimized; Debug configurations are slow)
+1. Run the Executable - Run_Win32/Volumetric.exe
+2. View source - open Volumetric.sln
+	- Build project if needed
 
-To run:
-1. Go to Thesis/Volumetric/Run_Win32
-2. Open Volumetric.exe
-----------------------------------------------------------------------------------------------------------
+Input bindings
+--------------
+Mouse    	- Camera look
+WASD, TG	- Camera movement
+Shift (hold)	- Move faster
+Arrow keys	- Move sun
+Mouse wheel	- Select toggle option
+M/N		- Tweak selected toggle option
+C		- Toggle clouds
+V		- Toggle god rays
+6		- Toggle temporal reprojection
+~		- Open/close Developer Console
 
-IMPORTANT:
-Always run on your best graphics processor. This application is not optimized for use with Integrated GPUs.
-----------------------------------------------------------------------------------------------------------
-
-Controls:
-WASD/Mouse/TG	- Look around/move
-~		- Toggle developer console (type "help" in console for list of commands)
-[]		- Change speed
-4		- Toggle cloud movement
-5		- Toggle mip level debug
-6		- Toggle frame amortization
-0		- Toggle debug overlay
-Mouse wheel	- Change current option to tweak
-M/N		- Tweak current option
-----------------------------------------------------------------------------------------------------------
+Developer Console commands
+--------------------------
+NOTE: Only relevant commands described for brevity.
+goto <x,y,z>   -	Go to the specified world position. Ex. "goto 0,5200,0" will take you to (0,5200,0).
+goin <x,y,z>   -	Go in the specified (camera relative) direction. Ex. "goin 0,0,100" will take you 100 units in the camera's forward direction.
+lookat <x,y,z> -	Make the camera look at the specified position. World up is assumed to be the reference up direction, so you cannot use a position directly above or below the camera.

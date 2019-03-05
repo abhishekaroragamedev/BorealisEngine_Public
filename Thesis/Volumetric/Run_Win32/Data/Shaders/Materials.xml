@@ -39,7 +39,8 @@
 		<Float name="CLOUD_LAYER_ALTITUDE" defaultValue="1100.0" />
 		<Float name="CLOUD_LAYER_HEIGHT" defaultValue="25.0" />
 		<Float name="SHADOWS_ENABLED" defaultValue="1.0" />
-    <Float name="TEMPORAL_UPSAMPLING_ENABLED" defaultValue="1.0" />
+    <Float name="TEMPORAL_REPROJECTION_ENABLED" defaultValue="1.0" />
+    <Float name="SUN_MOVED_THIS_FRAME" defaultValue="0.0" />
 		<Float name="WEATHER_TEXTURE_TILE_FACTOR" defaultValue="1.0" />
 		<Float name="SHAPE_TEXTURE_TILE_FACTOR" defaultValue="1.0" />
 		<Float name="DETAIL_TEXTURE_TILE_FACTOR" defaultValue="1.0" />
@@ -53,7 +54,12 @@
     <Float name="DEBUG_VIEW_LODS" defaultValue="0.0" />
 	</Material>
   <Material name="CloudsFullscreen" shader="CloudsFullscreen" />
-  <Material name="GodRays" shader="GodRays" />
+  <Material name="GodRays" shader="GodRays" >
+    <Float  name="NUM_SAMPLES" defaultValue="200.0" />
+    <Float  name="WEIGHT" defaultValue="0.05" />
+    <Float  name="DECAY" defaultValue="0.95" />
+    <Float  name="EXPOSURE" defaultValue="2.0" />
+  </Material>
 	<Material name="2DWeatherTextureDebug" shader="2DWeatherTextureDebug" >
 		<Vec4 name="CHANNEL_MASK" defaultValue="1.0,1.0,1.0,0.0" />
 		<Float name="UV_OFFSET" defaultValue="0.0" />

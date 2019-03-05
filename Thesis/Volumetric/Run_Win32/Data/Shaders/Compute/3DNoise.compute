@@ -266,15 +266,16 @@ float Worley3D( float posX, float posY, float posZ, float scaleX, float scaleY, 
 		}
 	}
 	minDistance = sqrt( minDistance );
-	minDistance *= octavesX * 0.5f;	// Based on trial and error; this most accurately maps to the CPU version's maxDistance, which cannot be computed here owing to work groups not being able to share data
+	//minDistance *= octavesX * 0.5f;	// Based on trial and error; this most accurately maps to the CPU version's maxDistance, which cannot be computed here owing to work groups not being able to share data
 	minDistance = clamp(minDistance, 0.0f, 1.0f);
-
 	return minDistance;
 }
 
 /* MAIN */
 void main()
 {
+    uint seed = 0;
+
 	ivec3 storePos = ivec3( gl_GlobalInvocationID );
 	vec4 color = imageLoad( noiseTex, storePos );
 
@@ -287,25 +288,13 @@ void main()
 			float( gl_NumWorkGroups.x ),
 			float( gl_NumWorkGroups.y ),
 			float( gl_NumWorkGroups.z ),
-			16,
+			8,
 			0.5f,
 			2.0f,
 			true,
-			0
+			seed
 		);
 		float gWorley = Worley3D(
-			float( gl_GlobalInvocationID.x ),
-			float( gl_GlobalInvocationID.y ),
-			float( gl_GlobalInvocationID.z ),
-			float( gl_NumWorkGroups.x ),
-			float( gl_NumWorkGroups.y ),
-			float( gl_NumWorkGroups.z ),
-			8.0f,
-			2.0f,
-			8.0f,
-			0
-		);
-		float bWorley = Worley3D(
 			float( gl_GlobalInvocationID.x ),
 			float( gl_GlobalInvocationID.y ),
 			float( gl_GlobalInvocationID.z ),
@@ -315,9 +304,9 @@ void main()
 			16.0f,
 			4.0f,
 			16.0f,
-			0
+			seed
 		);
-		float aWorley = Worley3D(
+		float bWorley = Worley3D(
 			float( gl_GlobalInvocationID.x ),
 			float( gl_GlobalInvocationID.y ),
 			float( gl_GlobalInvocationID.z ),
@@ -327,7 +316,19 @@ void main()
 			32.0f,
 			8.0f,
 			32.0f,
-			0
+			seed
+		);
+		float aWorley = Worley3D(
+			float( gl_GlobalInvocationID.x ),
+			float( gl_GlobalInvocationID.y ),
+			float( gl_GlobalInvocationID.z ),
+			float( gl_NumWorkGroups.x ),
+			float( gl_NumWorkGroups.y ),
+			float( gl_NumWorkGroups.z ),
+			64.0f,
+			16.0f,
+			64.0f,
+			seed
 		);
 
 		color.r = RangeMapFloat( perlin, -1.0f, 1.0f, 0.0f, 1.0f );
@@ -347,7 +348,7 @@ void main()
 			2.0f,
 			2.0f,
 			2.0f,
-			0
+			seed
 		);
 		float gWorley = Worley3D(
 			float( gl_GlobalInvocationID.x ),
@@ -359,7 +360,7 @@ void main()
 			4.0f,
 			4.0f,
 			4.0f,
-			0
+			seed
 		);
 		float bWorley = Worley3D(
 			float( gl_GlobalInvocationID.x ),
@@ -371,7 +372,7 @@ void main()
 			8.0f,
 			8.0f,
 			8.0f,
-			0
+			seed
 		);
 
 		color.r = rWorley;

@@ -598,6 +598,10 @@
             <Color operation="Add" source="one" destination="zero" />
             <Alpha operation="Add" source="one" destination="zero" />
           </ColorTarget>
+          <ColorTarget> <!-- Scene volumetric shadows - override values every frame -->
+            <Color operation="Add" source="one" destination="zero" />
+            <Alpha operation="Add" source="one" destination="zero" />
+          </ColorTarget>
       </TargetBlend>
       
 			<Depth compare="Always" write="false" />
@@ -608,7 +612,8 @@
 				<Float name="CLOUD_LAYER_ALTITUDE" defaultValue="1100.0" />
 				<Float name="CLOUD_LAYER_HEIGHT" defaultValue="25.0" />
 				<Float name="SHADOWS_ENABLED" defaultValue="1.0" />
-        <Float name="TEMPORAL_UPSAMPLING_ENABLED" defaultValue="1.0" />
+        <Float name="TEMPORAL_REPROJECTION_ENABLED" defaultValue="1.0" />
+        <Float name="SUN_MOVED_THIS_FRAME" defaultValue="0.0" />
 				<Float name="WEATHER_TEXTURE_TILE_FACTOR" defaultValue="1.0" />
 				<Float name="SHAPE_TEXTURE_TILE_FACTOR" defaultValue="1.0" />
 				<Float name="DETAIL_TEXTURE_TILE_FACTOR" defaultValue="1.0" />
@@ -651,6 +656,10 @@
       <Depth compare="Always" write="false" />
 
       <Defaults>
+        <Float  name="NUM_SAMPLES" defaultValue="200.0" />
+        <Float  name="WEIGHT" defaultValue="0.05" />
+        <Float  name="DECAY" defaultValue="0.95" />
+        <Float  name="EXPOSURE" defaultValue="2.0" />
         <Texture fileName="Data/Images/Texture_Default.png" />
       </Defaults>
     </ShaderPass >

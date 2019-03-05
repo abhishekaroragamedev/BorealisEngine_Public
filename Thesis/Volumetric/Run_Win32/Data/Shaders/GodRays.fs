@@ -4,10 +4,6 @@
 
 #define DIRECTIONAL_LIGHT_INDEX 0
 #define MAX_LIGHTS 8
-#define NUM_SAMPLES 200
-#define WEIGHT 0.05f
-#define DECAY 0.96f
-#define EXPOSURE 2.5f
 
 layout ( binding = 1, std140 ) uniform CameraUBO
 {
@@ -38,6 +34,14 @@ layout( binding = 2, std140 ) uniform ActiveLights
 {
 	vec4 ambientLightColorAndIntensity;
 	Light lights[ MAX_LIGHTS ];
+};
+
+layout ( binding = 9, std140 ) uniform Config
+{
+	float	NUM_SAMPLES;
+	float	WEIGHT;
+	float	DECAY;
+	float	EXPOSURE;
 };
 
 layout ( binding = 0 ) uniform sampler2D sceneTex;
